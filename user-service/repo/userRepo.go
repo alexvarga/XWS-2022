@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -59,12 +60,42 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 
 	collection := userRepo.client.Database("testDatabase").Collection("users")
 
-	insertResult, err := collection.InsertOne(context.TODO(), user)
+	filter := bson.D{{"email", email}}
+	var result data.User
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
-		log.Fatal(err)
+		insertResult, err := collection.InsertOne(context.TODO(), user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+
+		return user.ID
 	}
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+	//fmt.Println(result)
 
-	return user.ID
+	return -1
+}
 
+func (userRepo *UserRepo) GetAllUsers() []*data.User {
+	var users []*data.User
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+	cur, err := collection.Find(context.TODO(), bson.D{{}})
+	fmt.Println(cur)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem data.User
+
+		err := cur.Decode(&elem)
+		fmt.Println(elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, &elem)
+	}
+
+	return users
 }

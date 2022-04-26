@@ -25,12 +25,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	err = server.CloseDB()
-	if err != nil {
-		log.Fatal(err)
-	}
+	defer server.CloseDB()
 
 	router.HandleFunc("/user", server.CreateUserHandler).Methods("POST")
+	router.HandleFunc("/users", server.GetAllUsersHandler).Methods("GET")
 
 	s := &http.Server{
 		Addr:         ":8080",

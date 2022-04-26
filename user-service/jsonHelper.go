@@ -18,10 +18,11 @@ func renderJSON(w http.ResponseWriter, v interface{}) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	write, err := w.Write(js)
+	_, err = w.Write(js)
 	if err != nil {
 		return
 	}
+
 }
 
 func decodeBody(r io.Reader) (*data.User, error) {

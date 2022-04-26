@@ -7,8 +7,6 @@ import (
 	"xws/user-service/repo"
 )
 
-//calls repo
-
 type UserServer struct {
 	userRepo *repo.UserRepo
 }
@@ -50,6 +48,18 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, r *http.R
 	}
 
 	id := userServer.userRepo.CreateUser(rt.Email, rt.Password, rt.FirstName, rt.LastName)
-	renderJSON(w, data.ResponseId{Id: id})
+	if id != -1 {
+		renderJSON(w, data.ResponseId{Id: id})
+	} else if id == -1 {
+		http.Error(w, "user with this email already exists", http.StatusMethodNotAllowed)
+
+	}
+
+}
+
+func (userServer *UserServer) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+
+	users := userServer.userRepo.GetAllUsers()
+	renderJSON(w, users)
 
 }
