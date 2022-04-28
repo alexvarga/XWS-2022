@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"strings"
 	"xws/user-service/data"
 )
 
@@ -100,12 +101,10 @@ func (userRepo *UserRepo) GetAllUsers() []*data.User {
 		}
 		users = append(users, &elem)
 	}
-
 	return users
 }
 
 func (userRepo *UserRepo) GetUserById(id string) data.User {
-
 	var user data.User
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -113,9 +112,7 @@ func (userRepo *UserRepo) GetUserById(id string) data.User {
 	}
 
 	filter := bson.D{{"_id", objectId}}
-
 	collection := userRepo.client.Database("testDatabase").Collection("users")
-
 	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err1 != nil {
 		fmt.Println(err1)
@@ -155,4 +152,22 @@ func (userRepo *UserRepo) EditUser(email string, firstName string, lastName stri
 
 	return nil
 	//return user
+}
+
+func (userRepo *UserRepo) SearchUsers(search string) *[]data.User {
+
+	searchTerms := strings.Split(search, " ")
+	var results []data.User
+	users := userRepo.GetAllUsers() //should be only users with non-private profiles
+	for i := 0; i < len(users); i++ {
+		for j := 0; j < len(searchTerms); j++ {
+			if (strings.Contains(users[i].FirstName, searchTerms[j])) || (strings.Contains(users[i].LastName, searchTerms[j])) {
+				results = append(results, *users[i])
+			}
+		}
+	}
+
+	//fmt.Println(results, "these are results")
+
+	return &results
 }

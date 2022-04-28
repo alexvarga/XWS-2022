@@ -61,7 +61,6 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, r *http.R
 }
 
 func (userServer *UserServer) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-
 	users := userServer.userRepo.GetAllUsers()
 	renderJSON(w, users)
 }
@@ -72,34 +71,26 @@ func (userServer *UserServer) GetUserByIdHandler(w http.ResponseWriter, r *http.
 	if id == "" {
 		http.Error(w, "missing id", http.StatusMethodNotAllowed)
 	}
-	fmt.Println("ovo je id", id)
 	user := userServer.userRepo.GetUserById(id)
 	fmt.Println(user, "ovo je user")
-
 	renderJSON(w, user)
-
 }
 
 func (userServer *UserServer) UpdateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	//vars := mux.Vars(request)
-	//id := vars["id"]
-
 	contentType := request.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
-		//tracer.LogError(span, err)
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if mediatype != "application/json" {
 		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
 		return
 	}
 
-	//ctx := tracer.ContextWithSpan(context.Background(), span)
 	ru, err := decodeBody(request.Body)
 	if err != nil {
-		//tracer.LogError(span, err)
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -109,5 +100,14 @@ func (userServer *UserServer) UpdateUserHandler(writer http.ResponseWriter, requ
 		http.Error(writer, err.Error(), http.StatusMethodNotAllowed)
 	}
 	renderJSON(writer, "success")
+}
+
+func (userServer *UserServer) SearchUsersHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	search := vars["search"]
+
+	users := userServer.userRepo.SearchUsers(search)
+	//fmt.Println("JUST JUST", users)
+	renderJSON(writer, users)
 
 }
