@@ -2,8 +2,10 @@ package repo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -47,7 +49,7 @@ func (userRepo *UserRepo) CloseDB() error {
 	return err
 }
 
-func (userRepo *UserRepo) CreateUser(email string, password string, firstName string, lastName string) int {
+func (userRepo *UserRepo) CreateUser(email string, password string, firstName string, lastName string) string {
 	//password currently palintext
 
 	user := data.User{
@@ -70,11 +72,13 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 		}
 		fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 
-		return user.ID
+		str, err := json.Marshal(insertResult.InsertedID)
+		fmt.Println(str, "ovo je str")
+		return string(str)
 	}
 	//fmt.Println(result)
 
-	return -1
+	return ""
 }
 
 func (userRepo *UserRepo) GetAllUsers() []*data.User {
@@ -98,4 +102,57 @@ func (userRepo *UserRepo) GetAllUsers() []*data.User {
 	}
 
 	return users
+}
+
+func (userRepo *UserRepo) GetUserById(id string) data.User {
+
+	var user data.User
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	filter := bson.D{{"_id", objectId}}
+
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+
+	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	return user
+}
+
+func (userRepo *UserRepo) EditUser(email string, firstName string, lastName string, age string, gender *data.Gender, number string, bio string, profile bool) error {
+
+	var user data.User
+	filter := bson.D{{"email", email}}
+
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	update := bson.D{
+		{"$set", bson.D{{"email", email}}},
+		{"$set", bson.D{{"firstName", firstName}}},
+		{"$set", bson.D{{"lastName", lastName}}},
+		{"$set", bson.D{{"age", age}}},
+		{"$set", bson.D{{"gender", gender}}},
+		{"$set", bson.D{{"phoneNumber", number}}},
+		{"$set", bson.D{{"bio", bio}}},
+		{"$set", bson.D{{"privateProfile", profile}}},
+	}
+
+	udpateUser, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println(udpateUser, "udpate user")
+
+	return nil
+	//return user
 }

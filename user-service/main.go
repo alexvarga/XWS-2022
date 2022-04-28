@@ -29,6 +29,8 @@ func main() {
 
 	router.HandleFunc("/user", server.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/users", server.GetAllUsersHandler).Methods("GET")
+	router.HandleFunc("/user/{id}", server.GetUserByIdHandler).Methods("GET")
+	router.HandleFunc("/user", server.UpdateUserHandler).Methods("PUT")
 
 	s := &http.Server{
 		Addr:         ":8080",
