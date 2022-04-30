@@ -74,11 +74,9 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 		fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 
 		str, err := json.Marshal(insertResult.InsertedID)
-		fmt.Println(str, "ovo je str")
+
 		return string(str)
 	}
-	//fmt.Println(result)
-
 	return ""
 }
 
@@ -112,6 +110,18 @@ func (userRepo *UserRepo) GetUserById(id string) data.User {
 	}
 
 	filter := bson.D{{"_id", objectId}}
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	return user
+}
+
+func (userRepo *UserRepo) GetUserByEmail(email string) data.User {
+	var user data.User
+
+	filter := bson.D{{"email", email}}
 	collection := userRepo.client.Database("testDatabase").Collection("users")
 	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err1 != nil {
@@ -170,4 +180,71 @@ func (userRepo *UserRepo) SearchUsers(search string) *[]data.User {
 	//fmt.Println(results, "these are results")
 
 	return &results
+}
+
+func (userRepo *UserRepo) AddExperience(email string, experience []data.Experience) error {
+
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+
+	update := bson.D{
+		{"$push", bson.D{{"experience", bson.D{
+			{"_id", primitive.NewObjectID()},
+			{"dateStarted", experience[0].DateStarted},
+			{"dateEnded", experience[0].DateEnded},
+			{"title", experience[0].Title},
+			{"info", experience[0].Info},
+		}}}},
+	}
+	filter := bson.D{{"email", email}}
+
+	udpateUser, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println(udpateUser, "udpate user experience. it is going to break :)")
+
+	return nil
+}
+
+func (userRepo *UserRepo) UpdateExperience(email string, id string, experience []data.Experience) error {
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	collection := userRepo.client.Database("testDatabase").Collection("users")
+
+	filter := bson.D{{"email", email}}
+	var result data.User
+	err = collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < len(result.Experience); i++ {
+		fmt.Println(result.Experience[i].ID, "obj", objectId)
+		if result.Experience[i].ID == id {
+			result.Experience[i].Title = experience[0].Title
+			result.Experience[i].Info = experience[0].Info
+			result.Experience[i].DateStarted = experience[0].DateStarted
+			result.Experience[i].DateEnded = experience[0].DateEnded
+		}
+	}
+
+	fmt.Println(filter, "ovo je filter")
+
+	update := bson.D{{"$set", bson.D{{"experience", result.Experience}}}}
+
+	fmt.Println(result, "ovo je result")
+
+	udpateUser, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println(*udpateUser, "udpated")
+
+	return nil
 }

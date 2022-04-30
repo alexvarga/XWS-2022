@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"mime"
 	"net/http"
 	"xws/user-service/data"
@@ -109,5 +110,65 @@ func (userServer *UserServer) SearchUsersHandler(writer http.ResponseWriter, req
 	users := userServer.userRepo.SearchUsers(search)
 	//fmt.Println("JUST JUST", users)
 	renderJSON(writer, users)
+
+}
+
+func (userServer *UserServer) AddExperienceHandler(writer http.ResponseWriter, request *http.Request) {
+	contentType := request.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	rt, err := decodeBody(request.Body)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = userServer.userRepo.AddExperience(rt.Email, rt.Experience)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func (userServer *UserServer) UpdateExperienceHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	id := vars["id"]
+	if id == "" {
+		http.Error(writer, "missing id", http.StatusMethodNotAllowed)
+	}
+	fmt.Println("this is id: ", id)
+
+	contentType := request.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	rt, err := decodeBody(request.Body)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Println(rt.Email, "ovo je email ")
+
+	err = userServer.userRepo.UpdateExperience(rt.Email, id, rt.Experience)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
