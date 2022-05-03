@@ -188,7 +188,7 @@ func (userRepo *UserRepo) AddExperience(email string, experience []data.Experien
 
 	update := bson.D{
 		{"$push", bson.D{{"experience", bson.D{
-			{"_id", primitive.NewObjectID()},
+			{"_id", primitive.NewObjectID().Hex()},
 			{"dateStarted", experience[0].DateStarted},
 			{"dateEnded", experience[0].DateEnded},
 			{"title", experience[0].Title},
