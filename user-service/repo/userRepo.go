@@ -65,8 +65,8 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 
 	filter := bson.D{{"email", email}}
 	var result data.User
-	err := collection.FindOne(context.TODO(), filter).Decode(&result)
-	if err != nil {
+	singleResult := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if singleResult != nil {
 		insertResult, err := collection.InsertOne(context.TODO(), user)
 		if err != nil {
 			log.Fatal(err)
@@ -74,6 +74,9 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 		fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 
 		str, err := json.Marshal(insertResult.InsertedID)
+		if err != nil {
+			//TODO error
+		}
 
 		return string(str)
 	}

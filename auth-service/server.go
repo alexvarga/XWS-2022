@@ -1,16 +1,19 @@
 package main
 
 import (
+	"fmt"
+	"mime"
 	"net/http"
-	"xws/user-service/repo"
+	"xws/auth-service/repository"
+	"xws/auth-service/token"
 )
 
 type UserServer struct {
-	userRepo *repo.UserRepo
+	userRepo *repository.UserRepo
 }
 
 func NewUserServer() (*UserServer, error) {
-	userRepo, err := repo.NewRepo()
+	userRepo, err := repository.NewRepo()
 	if err != nil {
 		return nil, err
 	}
@@ -25,10 +28,72 @@ func (userServer *UserServer) CloseDB() error {
 }
 
 func (userServer *UserServer) LoginHandler(writer http.ResponseWriter, request *http.Request) {
+	contentType := request.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	//ctx := tracer.ContextWithSpan(context.Background(), span)
+	rt, err := decodeBody(request.Body)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = userServer.userRepo.CheckLogin(rt.Email, rt.Password)
+	if err != nil {
+		fmt.Println(err)
+		writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	token, err := token.CreateJWT(rt.ID, rt.Email)
+	http.SetCookie(writer, &http.Cookie{
+		Name:  "token",
+		Value: token,
+	})
+	fmt.Println(token)
+	renderJSON(writer, token)
 
 }
 
 func (userServer *UserServer) RegisterHandler(writer http.ResponseWriter, request *http.Request) {
+
+	contentType := request.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	//ctx := tracer.ContextWithSpan(context.Background(), span)
+	rt, err := decodeBody(request.Body)
+	if err != nil {
+		//tracer.LogError(span, err)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = userServer.userRepo.CreateUser(rt.Email, rt.Password)
+	if err == nil {
+		renderJSON(writer, "success")
+	} else if err != nil {
+		http.Error(writer, "user with this email already exists", http.StatusMethodNotAllowed)
+
+	}
 
 }
 
