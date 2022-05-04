@@ -51,7 +51,7 @@ func (userServer *UserServer) LoginHandler(writer http.ResponseWriter, request *
 	err = userServer.userRepo.CheckLogin(rt.Email, rt.Password)
 	if err != nil {
 		fmt.Println(err)
-		writer.WriteHeader(http.StatusUnauthorized)
+		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
 

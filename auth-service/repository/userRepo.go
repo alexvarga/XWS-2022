@@ -54,12 +54,8 @@ func (userRepo *UserRepo) CheckLogin(email string, password string) error {
 	collection := userRepo.client.Database("credentials").Collection("users")
 
 	filter := bson.D{{"email", email}}
-	fmt.Println("ovo je filter: ", filter, "#")
 	var result data.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
-	fmt.Println("ovo je single result", err)
-
-	fmt.Println("ovo je result: ", result, "#")
 	if err != nil {
 		fmt.Println("not found user")
 		return errors.New("user not found")
@@ -97,7 +93,8 @@ func (userRepo *UserRepo) CreateUser(email string, password string) error {
 
 		fmt.Println(str)
 		return nil
+	} else {
+		return errors.New("user with this email already exists")
 	}
 
-	return nil
 }
