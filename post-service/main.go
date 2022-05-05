@@ -24,7 +24,11 @@ func main() {
 
 	defer server.CloseDB()
 
-	router.HandleFunc("/post", server.CreatePost).Methods("POST")
+	router.HandleFunc("/post", server.CreatePostHandler).Methods("POST")
+	router.HandleFunc("/posts", server.GetAllPostsHandler).Methods("GET")
+	router.HandleFunc("/posts/{user}", server.GetAllPostsFromUserHandler).Methods("GET")
+	router.HandleFunc("/post/like/{id}", server.LikeAPostHandler).Methods("PUT")
+	router.HandleFunc("/post/dis/{id}", server.DislikeAPostHandler).Methods("PUT")
 
 	s := &http.Server{
 		Addr:         ":8080",
