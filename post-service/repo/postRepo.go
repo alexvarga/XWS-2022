@@ -171,12 +171,31 @@ func (postRepo *PostRepo) AddAComment(userId string, postId string, commentText 
 			{"text", commentText},
 		}}}},
 	}
-
-	filter := bson.D{{"postId", postId}}
+	postObjectId, err := primitive.ObjectIDFromHex(postId)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(postId, "ovo je post id")
+	filter := bson.D{{"_id", postObjectId}}
+	fmt.Println(filter, "ovo je filter post id")
 
 	updatePost, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return err
+		update := bson.D{
+			{"$set", bson.D{{"comments", bson.A{bson.D{
+				{"_id", primitive.NewObjectID().Hex()},
+				{"postId", postId},
+				{"userId", userId},
+				{"text", commentText},
+			}}}}},
+		}
+		updatePost, err2 := collection.UpdateOne(context.TODO(), filter, update)
+		fmt.Println(updatePost, "added a comment to a post")
+		if err2 != nil {
+			return err2
+
+		}
+
 	}
 	fmt.Println(updatePost, "post updated with a comment")
 	return nil

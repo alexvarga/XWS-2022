@@ -199,15 +199,32 @@ func (userRepo *UserRepo) AddExperience(email string, experience []data.Experien
 			{"info", experience[0].Info},
 		}}}},
 	}
+
 	filter := bson.D{{"email", email}}
 
 	udpateUser, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		update := bson.D{
+			{"$set", bson.D{{"experience", bson.A{bson.D{
+				{"_id", primitive.NewObjectID().Hex()},
+				{"dateStarted", experience[0].DateStarted},
+				{"dateEnded", experience[0].DateEnded},
+				{"title", experience[0].Title},
+				{"info", experience[0].Info},
+			}}}}},
+		}
+		filter := bson.D{{"email", email}}
+
+		udpateUser, err2 := collection.UpdateOne(context.TODO(), filter, update)
+		if err2 != nil {
+			fmt.Println(err2)
+			return err2
+		}
+		fmt.Println(udpateUser, "udpate user experience.")
+
 	}
 
-	fmt.Println(udpateUser, "udpate user experience. it is going to break :)")
+	fmt.Println(udpateUser, "udpate user experience.")
 
 	return nil
 }
