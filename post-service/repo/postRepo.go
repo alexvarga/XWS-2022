@@ -8,8 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
+	"post-service/data"
 	"time"
-	"xws/post-service/data"
 )
 
 type PostRepo struct {
@@ -19,8 +20,8 @@ type PostRepo struct {
 func NewRepo() (*PostRepo, error) {
 	postRepo := &PostRepo{}
 
-	//mongoUri := os.Getenv("MONGODB_URI")
-	clientOptions := options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/?connect=direct")
+	mongoUri := os.Getenv("MONGODB_URI")
+	clientOptions := options.Client().ApplyURI("mongodb://" + mongoUri + "/?connect=direct")
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)

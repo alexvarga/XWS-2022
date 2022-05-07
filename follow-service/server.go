@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"follow-service/repo"
 	"github.com/gorilla/mux"
 	"net/http"
-	"xws/follow-service/repo"
 )
 
 type FollowServer struct {

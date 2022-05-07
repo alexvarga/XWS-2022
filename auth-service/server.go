@@ -1,11 +1,11 @@
 package main
 
 import (
+	"auth-service/repository"
+	"auth-service/token"
 	"fmt"
 	"mime"
 	"net/http"
-	"xws/auth-service/repository"
-	"xws/auth-service/token"
 )
 
 type UserServer struct {

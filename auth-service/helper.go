@@ -1,10 +1,10 @@
 package main
 
 import (
+	"auth-service/data"
 	"encoding/json"
 	"io"
 	"net/http"
-	"xws/auth-service/data"
 )
 
 // renderJSON renders 'v' as JSON and writes it as a response into w.

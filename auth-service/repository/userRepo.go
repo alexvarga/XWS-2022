@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"auth-service/data"
 	"context"
 	"encoding/json"
 	"errors"
@@ -9,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"xws/auth-service/data"
+	"os"
 )
 
 type UserRepo struct {
@@ -19,8 +20,8 @@ type UserRepo struct {
 func NewRepo() (*UserRepo, error) {
 	userRepo := &UserRepo{}
 
-	//mongoUri := os.Getenv("MONGODB_URI")
-	clientOptions := options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/?connect=direct")
+	mongoUri := os.Getenv("MONGODB_URI")
+	clientOptions := options.Client().ApplyURI("mongodb://" + mongoUri + "/?connect=direct")
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)

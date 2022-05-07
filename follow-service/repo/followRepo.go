@@ -3,11 +3,12 @@ package repo
 import (
 	"context"
 	"fmt"
+	"follow-service/data"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"xws/follow-service/data"
+	"os"
 )
 
 type FollowRepo struct {
@@ -18,7 +19,8 @@ func NewRepo() (*FollowRepo, error) {
 	followRepo := &FollowRepo{}
 
 	//mongoUri := os.Getenv("MONGODB_URI")
-	clientOptions := options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/?connect=direct")
+	mongoUri := os.Getenv("MONGODB_URI")
+	clientOptions := options.Client().ApplyURI("mongodb://" + mongoUri + "/?connect=direct")
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)

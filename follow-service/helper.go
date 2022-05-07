@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"follow-service/data"
 	"io"
 	"net/http"
-	"xws/follow-service/data"
 )
 
 // renderJSON renders 'v' as JSON and writes it as a response into w.

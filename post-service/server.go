@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"mime"
 	"net/http"
-	"xws/post-service/repo"
+	"post-service/repo"
 )
 
 type PostServer struct {

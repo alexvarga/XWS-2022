@@ -6,8 +6,8 @@ import (
 	"log"
 	"mime"
 	"net/http"
-	"xws/user-service/data"
-	"xws/user-service/repo"
+	"user-service/data"
+	"user-service/repo"
 )
 
 type UserServer struct {

@@ -9,8 +9,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 	"strings"
-	"xws/user-service/data"
+	"user-service/data"
 )
 
 type UserRepo struct {
@@ -20,8 +21,8 @@ type UserRepo struct {
 func NewRepo() (*UserRepo, error) {
 	userRepo := &UserRepo{}
 
-	//mongoUri := os.Getenv("MONGODB_URI")
-	clientOptions := options.Client().ApplyURI("mongodb://" + "localhost:27017" + "/?connect=direct")
+	mongoUri := os.Getenv("MONGODB_URI")
+	clientOptions := options.Client().ApplyURI("mongodb://" + mongoUri + "/?connect=direct")
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)
