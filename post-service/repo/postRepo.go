@@ -159,3 +159,25 @@ func (postRepo *PostRepo) DislikeAPost(id string) error {
 
 	return nil
 }
+
+func (postRepo *PostRepo) AddAComment(userId string, postId string, commentText string) error {
+	collection := postRepo.client.Database("posts").Collection("posts")
+
+	update := bson.D{
+		{"$push", bson.D{{"comments", bson.D{
+			{"_id", primitive.NewObjectID().Hex()},
+			{"postId", postId},
+			{"userId", userId},
+			{"text", commentText},
+		}}}},
+	}
+
+	filter := bson.D{{"postId", postId}}
+
+	updatePost, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+	fmt.Println(updatePost, "post updated with a comment")
+	return nil
+}

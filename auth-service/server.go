@@ -56,10 +56,7 @@ func (userServer *UserServer) LoginHandler(writer http.ResponseWriter, request *
 	}
 
 	token, err := token.CreateJWT(rt.ID, rt.Email)
-	http.SetCookie(writer, &http.Cookie{
-		Name:  "token",
-		Value: token,
-	})
+
 	fmt.Println(token)
 	renderJSON(writer, token)
 
@@ -70,7 +67,6 @@ func (userServer *UserServer) RegisterHandler(writer http.ResponseWriter, reques
 	contentType := request.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
-		//tracer.LogError(span, err)
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -79,10 +75,9 @@ func (userServer *UserServer) RegisterHandler(writer http.ResponseWriter, reques
 		return
 	}
 
-	//ctx := tracer.ContextWithSpan(context.Background(), span)
 	rt, err := decodeBody(request.Body)
 	if err != nil {
-		//tracer.LogError(span, err)
+
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}

@@ -29,6 +29,7 @@ func main() {
 	router.HandleFunc("/posts/{user}", server.GetAllPostsFromUserHandler).Methods("GET")
 	router.HandleFunc("/post/like/{id}", server.LikeAPostHandler).Methods("PUT")
 	router.HandleFunc("/post/dis/{id}", server.DislikeAPostHandler).Methods("PUT")
+	router.HandleFunc("/post/comment/{postId}", server.LeaveACommentHandler).Methods("POST")
 
 	s := &http.Server{
 		Addr:         ":8080",

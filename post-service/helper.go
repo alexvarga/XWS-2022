@@ -26,12 +26,19 @@ func renderJSON(w http.ResponseWriter, v interface{}) {
 }
 
 func decodeBody(r io.Reader) (*data.Post, error) {
-	//span := tracer.StartSpanFromContext(ctx, "decodeBody")
-	//defer span.Finish()
-
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 	var rt data.Post
+	if err := dec.Decode(&rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func decodeCommentBody(r io.Reader) (*data.Comment, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+	var rt data.Comment
 	if err := dec.Decode(&rt); err != nil {
 		return nil, err
 	}

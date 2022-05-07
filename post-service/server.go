@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"mime"
 	"net/http"
 	"post-service/repo"
@@ -66,7 +67,6 @@ func (postServer *PostServer) GetAllPostsFromUserHandler(writer http.ResponseWri
 func (postServer *PostServer) LikeAPostHandler(writer http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	postId := vars["id"]
-	fmt.Println(postId, "this is post id")
 	if postId == "" {
 		http.Error(writer, "missing user id", http.StatusMethodNotAllowed)
 	}
@@ -75,13 +75,12 @@ func (postServer *PostServer) LikeAPostHandler(writer http.ResponseWriter, reque
 		fmt.Println(err)
 		http.Error(writer, "error :)", http.StatusInternalServerError)
 	}
-	renderJSON(writer, "succes")
+	renderJSON(writer, "success")
 }
 
 func (postServer *PostServer) DislikeAPostHandler(writer http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	postId := vars["id"]
-	fmt.Println(postId, "this is post id")
 	if postId == "" {
 		http.Error(writer, "missing user id", http.StatusMethodNotAllowed)
 	}
@@ -90,7 +89,31 @@ func (postServer *PostServer) DislikeAPostHandler(writer http.ResponseWriter, re
 		fmt.Println(err)
 		http.Error(writer, "error :)", http.StatusInternalServerError)
 	}
-	renderJSON(writer, "succes")
+	renderJSON(writer, "success")
+}
+
+func (postServer *PostServer) LeaveACommentHandler(writer http.ResponseWriter, request *http.Request) {
+	contentType := request.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(writer, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	rt, err := decodeCommentBody(request.Body)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = postServer.postRepo.AddAComment(rt.UserID, rt.PostID, rt.Text)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func NewPostServer() (*PostServer, error) {
