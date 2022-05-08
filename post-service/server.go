@@ -93,6 +93,11 @@ func (postServer *PostServer) DislikeAPostHandler(writer http.ResponseWriter, re
 }
 
 func (postServer *PostServer) LeaveACommentHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	postId := vars["postId"]
+	if postId == "" {
+		http.Error(writer, "missing post id", http.StatusMethodNotAllowed)
+	}
 	contentType := request.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
@@ -110,7 +115,7 @@ func (postServer *PostServer) LeaveACommentHandler(writer http.ResponseWriter, r
 		return
 	}
 
-	err = postServer.postRepo.AddAComment(rt.UserID, rt.PostID, rt.Text)
+	err = postServer.postRepo.AddAComment(rt.UserID, postId, rt.Text)
 	if err != nil {
 		log.Fatal(err)
 	}

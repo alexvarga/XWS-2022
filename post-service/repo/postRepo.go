@@ -80,7 +80,7 @@ func (postRepo *PostRepo) GetAllPosts() []*data.Post {
 		var elem data.Post
 
 		err := cur.Decode(&elem)
-		fmt.Println(elem)
+		//fmt.Println(elem)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -104,7 +104,6 @@ func (postRepo *PostRepo) GetPostsFromUser(user string) []*data.Post {
 		var elem data.Post
 
 		err := cur.Decode(&elem)
-		fmt.Println(elem, "this is a post")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -117,9 +116,9 @@ func (postRepo *PostRepo) GetPostsFromUser(user string) []*data.Post {
 func (postRepo *PostRepo) LikeAPost(id string) error {
 	collection := postRepo.client.Database("posts").Collection("posts")
 	objectID, err := primitive.ObjectIDFromHex(id)
-	fmt.Println("object ID: ", objectID)
+	//fmt.Println("object ID: ", objectID)
 	if err != nil {
-
+		fmt.Println(err)
 	}
 	filter := bson.D{{"_id", objectID}}
 	update := bson.D{
@@ -140,9 +139,9 @@ func (postRepo *PostRepo) LikeAPost(id string) error {
 func (postRepo *PostRepo) DislikeAPost(id string) error {
 	collection := postRepo.client.Database("posts").Collection("posts")
 	objectID, err := primitive.ObjectIDFromHex(id)
-	fmt.Println("object ID: ", objectID)
+	//fmt.Println("object ID: ", objectID)
 	if err != nil {
-
+		fmt.Println(err)
 	}
 	filter := bson.D{{"_id", objectID}}
 	update := bson.D{
@@ -175,9 +174,7 @@ func (postRepo *PostRepo) AddAComment(userId string, postId string, commentText 
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(postId, "ovo je post id")
 	filter := bson.D{{"_id", postObjectId}}
-	fmt.Println(filter, "ovo je filter post id")
 
 	updatePost, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
