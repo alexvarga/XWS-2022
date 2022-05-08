@@ -59,7 +59,7 @@ func (followRepo *FollowRepo) Follow(userId string, followerId string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("inserted post: ", insertResult)
+	fmt.Println("inserted follow: ", insertResult)
 	return nil
 
 }

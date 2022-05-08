@@ -58,7 +58,7 @@ func (userRepo *UserRepo) CheckLogin(email string, password string) error {
 	var result data.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
-		fmt.Println("not found user")
+		fmt.Println("user not found")
 		return errors.New("user not found")
 	} else if result.Password != password {
 		fmt.Println("passwords not matching")
