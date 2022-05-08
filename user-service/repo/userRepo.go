@@ -51,18 +51,22 @@ func (userRepo *UserRepo) CloseDB() error {
 	return err
 }
 
-func (userRepo *UserRepo) CreateUser(email string, password string, firstName string, lastName string) string {
+func (userRepo *UserRepo) CreateUser(email string, password string, firstName string, lastName string, age string, gender data.Gender, bio string, phoneNo string) string {
 	//password currently palintext
 
 	user := data.User{
 
-		Email:     email,
-		Password:  password,
-		FirstName: firstName,
-		LastName:  lastName,
+		Email:       email,
+		Password:    password,
+		FirstName:   firstName,
+		LastName:    lastName,
+		Age:         age,
+		Gender:      gender,
+		Bio:         bio,
+		PhoneNumber: phoneNo,
 	}
 
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 
 	filter := bson.D{{"email", email}}
 	var result data.User
@@ -76,7 +80,7 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 
 		str, err := json.Marshal(insertResult.InsertedID)
 		if err != nil {
-			//TODO error
+			fmt.Println(err)
 		}
 
 		return string(str)
@@ -86,7 +90,7 @@ func (userRepo *UserRepo) CreateUser(email string, password string, firstName st
 
 func (userRepo *UserRepo) GetAllUsers() []*data.User {
 	var users []*data.User
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 	cur, err := collection.Find(context.TODO(), bson.D{{}})
 	fmt.Println(cur)
 	if err != nil {
@@ -97,7 +101,7 @@ func (userRepo *UserRepo) GetAllUsers() []*data.User {
 		var elem data.User
 
 		err := cur.Decode(&elem)
-		fmt.Println(elem)
+		//fmt.Println(elem)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -114,7 +118,7 @@ func (userRepo *UserRepo) GetUserById(id string) data.User {
 	}
 
 	filter := bson.D{{"_id", objectId}}
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err1 != nil {
 		fmt.Println(err1)
@@ -126,7 +130,7 @@ func (userRepo *UserRepo) GetUserByEmail(email string) data.User {
 	var user data.User
 
 	filter := bson.D{{"email", email}}
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 	err1 := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err1 != nil {
 		fmt.Println(err1)
@@ -134,12 +138,12 @@ func (userRepo *UserRepo) GetUserByEmail(email string) data.User {
 	return user
 }
 
-func (userRepo *UserRepo) EditUser(email string, firstName string, lastName string, age string, gender *data.Gender, number string, bio string, profile bool) error {
+func (userRepo *UserRepo) EditUser(email string, firstName string, lastName string, age string, gender data.Gender, number string, bio string, profile bool) error {
 
 	var user data.User
 	filter := bson.D{{"email", email}}
 
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
 		fmt.Println(err)
@@ -181,14 +185,12 @@ func (userRepo *UserRepo) SearchUsers(search string) *[]data.User {
 		}
 	}
 
-	//fmt.Println(results, "these are results")
-
 	return &results
 }
 
 func (userRepo *UserRepo) AddExperience(email string, experience []data.Experience) error {
 
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	collection := userRepo.client.Database("usersDB").Collection("users")
 
 	update := bson.D{
 		{"$push", bson.D{{"experience", bson.D{
@@ -230,21 +232,19 @@ func (userRepo *UserRepo) AddExperience(email string, experience []data.Experien
 }
 
 func (userRepo *UserRepo) UpdateExperience(email string, id string, experience []data.Experience) error {
-	objectId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return err
-	}
-	collection := userRepo.client.Database("testDatabase").Collection("users")
+	//objectId, err := primitive.ObjectIDFromHex(id)
+
+	collection := userRepo.client.Database("usersDB").Collection("users")
 
 	filter := bson.D{{"email", email}}
 	var result data.User
-	err = collection.FindOne(context.TODO(), filter).Decode(&result)
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		return err
 	}
 
 	for i := 0; i < len(result.Experience); i++ {
-		fmt.Println(result.Experience[i].ID, "obj", objectId)
+		//fmt.Println(result.Experience[i].ID, "obj", objectId)
 		if result.Experience[i].ID == id {
 			result.Experience[i].Title = experience[0].Title
 			result.Experience[i].Info = experience[0].Info
@@ -253,19 +253,14 @@ func (userRepo *UserRepo) UpdateExperience(email string, id string, experience [
 		}
 	}
 
-	fmt.Println(filter, "ovo je filter")
-
 	update := bson.D{{"$set", bson.D{{"experience", result.Experience}}}}
-
-	fmt.Println(result, "ovo je result")
-
 	udpateUser, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	fmt.Println(*udpateUser, "udpated")
+	fmt.Println(*udpateUser, "updated")
 
 	return nil
 }

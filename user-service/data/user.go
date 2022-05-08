@@ -7,7 +7,7 @@ type User struct {
 	FirstName      string       `bson:"firstName"`
 	LastName       string       `bson:"lastName"`
 	Age            string       `bson:"age"`
-	Gender         *Gender      `bson:"gender"`
+	Gender         Gender       `bson:"gender"`
 	PhoneNumber    string       `bson:"phoneNumber"`
 	Bio            string       `bson:"bio"`
 	PrivateProfile bool         `bson:"privateProfile"`

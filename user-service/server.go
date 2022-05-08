@@ -33,7 +33,6 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, r *http.R
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
-		//tracer.LogError(span, err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -42,7 +41,6 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	//ctx := tracer.ContextWithSpan(context.Background(), span)
 	rt, err := decodeBody(r.Body)
 	if err != nil {
 		//tracer.LogError(span, err)
@@ -50,7 +48,7 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	id := userServer.userRepo.CreateUser(rt.Email, rt.Password, rt.FirstName, rt.LastName)
+	id := userServer.userRepo.CreateUser(rt.Email, rt.Password, rt.FirstName, rt.LastName, rt.Age, rt.Gender, rt.Bio, rt.PhoneNumber)
 	if id != "" {
 		fmt.Println(id)
 		renderJSON(w, data.ResponseId{Id: id})
@@ -108,7 +106,6 @@ func (userServer *UserServer) SearchUsersHandler(writer http.ResponseWriter, req
 	search := vars["search"]
 
 	users := userServer.userRepo.SearchUsers(search)
-	//fmt.Println("JUST JUST", users)
 	renderJSON(writer, users)
 
 }
@@ -145,7 +142,6 @@ func (userServer *UserServer) UpdateExperienceHandler(writer http.ResponseWriter
 	if id == "" {
 		http.Error(writer, "missing id", http.StatusMethodNotAllowed)
 	}
-	fmt.Println("this is id: ", id)
 
 	contentType := request.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
@@ -160,11 +156,9 @@ func (userServer *UserServer) UpdateExperienceHandler(writer http.ResponseWriter
 
 	rt, err := decodeBody(request.Body)
 	if err != nil {
-		//tracer.LogError(span, err)
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(rt.Email, "ovo je email ")
 
 	err = userServer.userRepo.UpdateExperience(rt.Email, id, rt.Experience)
 	if err != nil {
