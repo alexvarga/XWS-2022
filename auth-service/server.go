@@ -44,6 +44,7 @@ func (userServer *UserServer) LoginHandler(writer http.ResponseWriter, request *
 	rt, err := decodeBody(request.Body)
 	if err != nil {
 		//tracer.LogError(span, err)
+		fmt.Println(err)
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}

@@ -7,6 +7,7 @@ import (
 	"mime"
 	"net/http"
 	"user-service/data"
+
 	"user-service/repo"
 )
 
@@ -166,3 +167,7 @@ func (userServer *UserServer) UpdateExperienceHandler(writer http.ResponseWriter
 	}
 
 }
+
+//func (s *UserServer) CreateUser(ctx context.Context, in *usr.CreateUserRequest) (*usr.User, error) {
+//
+//}
