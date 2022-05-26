@@ -91,6 +91,3 @@
   </v-container>
 </template>
 
-<script>
-  
-</script>
