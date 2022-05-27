@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -24,6 +25,11 @@ func main() {
 
 	defer server.CloseDB()
 
+	headers := handlers.AllowedHeaders([]string{"DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since", "Cache-Control", "Content-Type", "Origin", "Accept", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	origins := handlers.AllowedOrigins([]string{"*"})
+	credentials := handlers.AllowCredentials()
+
 	router.HandleFunc("/post", server.CreatePostHandler).Methods("POST")
 	router.HandleFunc("/posts", server.GetAllPostsHandler).Methods("GET")
 	router.HandleFunc("/posts/{user}", server.GetAllPostsFromUserHandler).Methods("GET")
@@ -31,9 +37,11 @@ func main() {
 	router.HandleFunc("/post/dis/{id}", server.DislikeAPostHandler).Methods("PUT")
 	router.HandleFunc("/post/comment/{postId}", server.LeaveACommentHandler).Methods("POST")
 
+	corsHandler := handlers.CORS(headers, methods, origins, credentials)
+
 	s := &http.Server{
 		Addr:         ":8080",
-		Handler:      router,
+		Handler:      corsHandler(router),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,

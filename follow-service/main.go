@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -24,6 +25,11 @@ func main() {
 
 	defer server.CloseDB()
 
+	headers := handlers.AllowedHeaders([]string{"DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since", "Cache-Control", "Content-Type", "Origin", "Accept", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	origins := handlers.AllowedOrigins([]string{"*"})
+	credentials := handlers.AllowCredentials()
+
 	router.HandleFunc("/follow/{user}/{follower}", server.FollowHandler).Methods("POST")
 	router.HandleFunc("/follow/request/{user}/{follower}", server.FollowRequestHandler).Methods("POST")
 	router.HandleFunc("/follows", server.GetAllFollowsHandler).Methods("GET")
@@ -32,9 +38,11 @@ func main() {
 	router.HandleFunc("/follow/{user}/{follower}", server.AcceptFollowerHandler).Methods("PUT")
 	router.HandleFunc("/follower/requests/{user}", server.GetAllFollowRequestsHandler).Methods("GET")
 
+	corsHandler := handlers.CORS(headers, methods, origins, credentials)
+
 	s := &http.Server{
 		Addr:         ":8080",
-		Handler:      router,
+		Handler:      corsHandler(router),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,

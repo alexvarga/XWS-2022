@@ -1,7 +1,9 @@
 <template>
   <div class="home">
-  
-  <post-card></post-card>
+  <div v-for="post in allPosts" :key="post.id">
+
+    <post-card :post="post"></post-card>
+  </div>
 
 
 
@@ -13,6 +15,7 @@ import {getToken} from "../token/token.js"
 import HelloWorld from "../components/HelloWorld";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import PostCard from "../components/PostCard.vue"
+import axios from 'axios';
 
 export default {
   name: "Home",
@@ -25,6 +28,7 @@ export default {
   data(){
     return {
       loggedInUser: false,
+      allPosts: [],
       
     }
   },
@@ -32,15 +36,22 @@ export default {
     checkLoggedInUser(){
     if (getToken() != null) {
       this.loggedInUser=true;
-      console.log(loggedInUser);
+      console.log(this.loggedInUser);
     } 
     },
-
+    loadPosts(){
+      axios
+      .get("http://localhost:8080/api/post/posts").then(response=> {
+        this.allPosts=response.data;
+        console.log(this.allPosts[0], 'post');
+      });
+    }
 
   },
 
   mounted() {
     this.checkLoggedInUser();
+    this.loadPosts();
     
   }
 };
