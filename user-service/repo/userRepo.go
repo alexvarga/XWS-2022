@@ -113,6 +113,7 @@ func (userRepo *UserRepo) GetAllUsers() []*data.User {
 func (userRepo *UserRepo) GetUserById(id string) data.User {
 	var user data.User
 	objectId, err := primitive.ObjectIDFromHex(id)
+	fmt.Println(objectId, "ovo je objectID")
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -1,14 +1,15 @@
 <template>
-  <v-card link elevation="1">
+  <v-card class="ma-4" link elevation="3">
     <v-card-title>Post title </v-card-title>
-    <v-card-subtitle> Poster user name</v-card-subtitle>
+    <v-card-subtitle>Autor: {{this.user.firstName}} {{user.lastName}} {{user.email}} {{post.UserID}}</v-card-subtitle>
     
     <v-card-text>
-      {{getUserById(post.UserID)}} <h3>{{user.Firstname}} {{user.LastName}} {{user.email}}</h3>    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto,
-      temporibus molestias! Laudantium incidunt omnis fugiat, alias nostrum
-      perferendis possimus expedita error vitae id exercitationem ducimus quis
-      praesentium in a aperiam?</p>
-      <p>{{(post.Content)}}</p> </v-card-text
+      <div ></div>
+      <!-- <h3>{{user.firstName}} {{user.lastName}} {{user.email}}</h3>   -->
+      <!-- <p>{{(post.Content)}}</p>  -->
+      <div v-html="decodedContent"></div>
+      
+      </v-card-text
     >
   </v-card>
 
@@ -18,6 +19,7 @@
 
 
 export default {
+ name: "post-card",
  props: ['post'],
  data(){
    return {
@@ -25,7 +27,8 @@ export default {
        email: "",
        firstName: "",
        lastName: ""
-     }
+     },
+     decodedContent: "",
 
    }
  },
@@ -33,6 +36,8 @@ export default {
    getUserById(id){
       axios
       .get("http://localhost:8080/api/user/user/"+id).then(response=> {
+        console.log(id, response.data)
+
         this.user.email=response.data.Email;
         this.user.firstName=response.data.FirstName;
         this.user.lastName=response.data.LastName;
@@ -41,8 +46,19 @@ export default {
         //return this.user.email;
         
       });
+    },
+    decodeContent(){
+      var decodedContent = atob(this.post.Content)
+     // console.log(decodedContent, "content");
+      this.decodedContent=decodedContent;
+      
     }
  },
+ mounted() {
+   this.decodeContent();
+   this.getUserById(this.post.UserID)
+
+ }
 
 }
 </script>

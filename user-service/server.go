@@ -168,6 +168,28 @@ func (userServer *UserServer) UpdateExperienceHandler(writer http.ResponseWriter
 
 }
 
+func (userServer *UserServer) GetUserIdByEmailHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	email := vars["email"]
+	if email == "" {
+		http.Error(writer, "missing id", http.StatusMethodNotAllowed)
+	}
+	user := userServer.userRepo.GetUserByEmail(email)
+	fmt.Println(user, "ovo je user")
+	renderJSON(writer, user.ID)
+}
+
+func (userServer *UserServer) GetUserByEmailHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	email := vars["email"]
+	if email == "" {
+		http.Error(writer, "missing id", http.StatusMethodNotAllowed)
+	}
+	user := userServer.userRepo.GetUserByEmail(email)
+	fmt.Println(user, "ovo je user")
+	renderJSON(writer, user)
+}
+
 //func (s *UserServer) CreateUser(ctx context.Context, in *usr.CreateUserRequest) (*usr.User, error) {
 //
 //}

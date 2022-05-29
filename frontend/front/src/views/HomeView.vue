@@ -1,21 +1,19 @@
 <template>
+
   <div class="home">
-  <div v-for="post in allPosts" :key="post.id">
-
-    <post-card :post="post"></post-card>
-  </div>
-
-
-
+    
+    <div v-for="post in allPosts" :key="post.id">
+      <post-card :post="post"></post-card>
+    </div>
   </div>
 </template>
 
 <script>
-import {getToken} from "../token/token.js"
+import { getToken, getId, getUsername } from "../token/token.js";
 import HelloWorld from "../components/HelloWorld";
 import HeaderComponent from "@/components/HeaderComponent.vue";
-import PostCard from "../components/PostCard.vue"
-import axios from 'axios';
+import PostCard from "../components/PostCard.vue";
+import axios from "axios";
 
 export default {
   name: "Home",
@@ -23,36 +21,84 @@ export default {
   components: {
     HelloWorld,
     HeaderComponent,
-    PostCard
+    PostCard,
   },
-  data(){
+  data() {
     return {
       loggedInUser: false,
+      loggedInUserId: "",
       allPosts: [],
-      
-    }
+      allFollows: [],
+    };
   },
   methods: {
-    checkLoggedInUser(){
-    if (getToken() != null) {
-      this.loggedInUser=true;
-      console.log(this.loggedInUser);
-    } 
+    checkLoggedInUser() {
+      if (getToken() != null) {
+        this.loggedInUser = true;
+        console.log("---- 1. checkLoggedInUser()");
+      }
     },
-    loadPosts(){
-      axios
-      .get("http://localhost:8080/api/post/posts").then(response=> {
-        this.allPosts=response.data;
-        console.log(this.allPosts[0], 'post');
-      });
-    }
+    loadPostsForLoggedInUser() {
+      if (this.loggedInUser) {
+        axios
+          .get("http://localhost:8080/api/user/user/id/" + getUsername())
+          .then((response) => {
+            this.loggedInUserId = response.data;
+            console.log(this.loggedInUserId, "logged in user id")
+            axios.get(
+            "http://localhost:8080/api/follow/following/" +this.loggedInUserId
+          ).then((response2)=> {
+            console.log(this.loggedInUserId)
+            this.allFollows = response2.data;
+
+            console.log(this.allFollows, "all follows")
+
+            console.log(response2.data, "follows data"); 
+          this.allFollows.forEach((element) => {
+
+            axios.get("http://localhost:8080/api/post/posts/"+element.FolloweeID).then((response3)=>{
+              console.log("samo test");
+              console.log(element.FolloweeID)
+              console.log(response3.data, "response data")
+              response3.data.forEach((el)=>{
+                this.allPosts.push(el)
+              })
+            })
+        });
+          })
+          });
+      }
+
+    },
+
+
+
+    loadPosts() {
+      console.log("---- 4. loadPosts() - outside");
+
+      if (!this.loggedInUser) {
+        axios.get("http://localhost:8080/api/post/posts").then((response) => {
+          console.log("---- 4a. loadPosts() - inside");
+
+          this.allPosts = response.data;
+          // console.log(this.allPosts[0], "post");
+        });
+      } else {
+        console.log("hi");
+
+      }
+    },
+  },
+  created() {
+    this.checkLoggedInUser();
+
+    this.loadPostsForLoggedInUser();
 
   },
 
   mounted() {
-    this.checkLoggedInUser();
+
     this.loadPosts();
-    
-  }
+  },
 };
 </script>

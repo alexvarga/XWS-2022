@@ -35,6 +35,8 @@ func main() {
 
 	router.HandleFunc("/user", server.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/users", server.GetAllUsersHandler).Methods("GET")
+	router.HandleFunc("/user/id/{email}", server.GetUserIdByEmailHandler).Methods("GET")
+	router.HandleFunc("/user/email/{email}", server.GetUserByEmailHandler).Methods("GET")
 	router.HandleFunc("/user/{id}", server.GetUserByIdHandler).Methods("GET")
 	router.HandleFunc("/user", server.UpdateUserHandler).Methods("PUT")
 	router.HandleFunc("/user/search/{search}", server.SearchUsersHandler).Methods("GET")
