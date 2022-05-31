@@ -1,7 +1,5 @@
 <template>
-
   <div class="home">
-    
     <div v-for="post in allPosts" :key="post.id">
       <post-card :post="post"></post-card>
     </div>
@@ -44,34 +42,38 @@ export default {
           .get("http://localhost:8080/api/user/user/id/" + getUsername())
           .then((response) => {
             this.loggedInUserId = response.data;
-            console.log(this.loggedInUserId, "logged in user id")
-            axios.get(
-            "http://localhost:8080/api/follow/following/" +this.loggedInUserId
-          ).then((response2)=> {
-            console.log(this.loggedInUserId)
-            this.allFollows = response2.data;
+            console.log(this.loggedInUserId, "logged in user id");
+            axios
+              .get(
+                "http://localhost:8080/api/follow/following/" +
+                  this.loggedInUserId
+              )
+              .then((response2) => {
+                console.log(this.loggedInUserId);
+                this.allFollows = response2.data;
 
-            console.log(this.allFollows, "all follows")
+                console.log(this.allFollows, "all follows");
 
-            console.log(response2.data, "follows data"); 
-          this.allFollows.forEach((element) => {
-
-            axios.get("http://localhost:8080/api/post/posts/"+element.FolloweeID).then((response3)=>{
-              console.log("samo test");
-              console.log(element.FolloweeID)
-              console.log(response3.data, "response data")
-              response3.data.forEach((el)=>{
-                this.allPosts.push(el)
-              })
-            })
-        });
-          })
+                console.log(response2.data, "follows data");
+                this.allFollows.forEach((element) => {
+                  axios
+                    .get(
+                      "http://localhost:8080/api/post/posts/" +
+                        element.FolloweeID
+                    )
+                    .then((response3) => {
+                      console.log("samo test");
+                      console.log(element.FolloweeID);
+                      console.log(response3.data, "response data");
+                      response3.data.forEach((el) => {
+                        this.allPosts.push(el);
+                      });
+                    });
+                });
+              });
           });
       }
-
     },
-
-
 
     loadPosts() {
       console.log("---- 4. loadPosts() - outside");
@@ -85,7 +87,6 @@ export default {
         });
       } else {
         console.log("hi");
-
       }
     },
   },
@@ -93,11 +94,9 @@ export default {
     this.checkLoggedInUser();
 
     this.loadPostsForLoggedInUser();
-
   },
 
   mounted() {
-
     this.loadPosts();
   },
 };

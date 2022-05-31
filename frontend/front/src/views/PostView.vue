@@ -1,5 +1,8 @@
 <template>
   <div class="post">
+        <v-snackbar transition="fade-transition" v-model="snackbar" centered timeout="1500">
+      <div >{{snackbarText}}</div>
+      </v-snackbar>  
     <div>
       <v-card outlined class="ma-4">
         <v-card-title>Post title</v-card-title>
@@ -28,20 +31,24 @@
       </v-card>
       <v-card class="ma-4">
         <v-card-title>Comments</v-card-title>
-        <v-card-text class="ma-4">
-          <div>
-
+        <div>
+          <v-card-text class="ma-4">
+          <div v-if="loggedInUser">
             <!-- <p style="white-space: pre-line">{{ comment }}</p> -->
-            <v-textarea class="mr-8" solo auto-grow
-              v-model="comment"
-                label="Your comment"
+            <v-textarea id="ta"
+              class="mr-8"
+              solo
+              auto-grow
+              v-model="commentHere"
+              label="Your comment"
             ></v-textarea>
-          
-          <v-btn>Submit</v-btn>
+
+            <v-btn @click="postAComment">Submit</v-btn>
           </div>
         </v-card-text>
+        </div>
         <div v-for="comment in this.post.comments" :key="comment.Id">
-        <comment-component :comment="comment" ></comment-component>
+          <comment-component :comment="comment"></comment-component>
         </div>
       </v-card>
     </div>
@@ -52,14 +59,21 @@
 import axios from "axios";
 import moment from "moment";
 import CommentComponent from "@/components/CommentComponent.vue";
+import { getToken, getUsername } from "../token/token.js";
+
 
 export default {
   components: { CommentComponent },
   name: "PostView",
   data() {
     return {
-        comment: "",
+      snackbarText: "",
+      snackbar: false,
+      loggedInUser: false,
+      loggedInUserId: "",
+      commentHere: "",
       post: {
+        id:"",
         decodedContent: "",
         userId: "",
         userFirstName: "",
@@ -79,9 +93,10 @@ export default {
           var decodedContent = atob(response.data.Content);
           this.post.decodedContent = decodedContent;
           this.post.userId = response.data.UserID;
-          var time = moment(response.data.published).format(
+          var time = moment(response.data.Published).format(
             "dddd DD-MMMM-YYYY HH:mm"
           );
+
           this.post.published = time;
           console.log(time);
           this.post.likes = response.data.Likes;
@@ -97,12 +112,53 @@ export default {
             });
         });
     },
+    checkLoggedInUser(){    
+        if (getToken() != null) {
+        this.loggedInUser = true;
+        console.log("---- 1. checkLoggedInUser()");
+        axios.get("http://localhost:8080/api/user/user/id/" + getUsername())
+          .then((response) => {
+            this.loggedInUserId = response.data;
+            console.log(this.loggedInUserId, "logged in user id")
+      });
+        }
+
+    },
+    postAComment(){
+      if (this.loggedInUser == true){
+        axios.post("http://localhost:8080/api/post/post/comment/"+this.postId, {
+          userId: this.loggedInUserId,
+          text: this.commentHere,
+        })
+
+        // var newComment= {
+        //   postId: this.postId,
+        //   userId: this.loggedInUserId,
+        //   text: this.commentHere,
+
+        // }
+        // this.post.comments.push(newComment);
+        
+        console.log(this.commentHere);
+        //document.getElementById("ta").value="";
+        this.commentHere="";
+        this.snackbarText="Your comment has been submitted.";
+        this.snackbar=true;
+      }
+    },
   },
   created() {
     this.postId = this.$route.params.postId;
   },
   mounted() {
     this.getPost();
+    this.checkLoggedInUser();
   },
 };
 </script>
+
+<style scoped>    
+    ::v-deep .v-snack__wrapper {
+        min-width: 0px;
+    }
+</style>

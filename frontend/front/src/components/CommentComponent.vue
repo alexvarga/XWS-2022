@@ -9,7 +9,7 @@
 export default {
   name: "comment-component",
   props: ['comment'],
-  data() {},
+  // data() {},
   methods: {},
 };
 </script>
