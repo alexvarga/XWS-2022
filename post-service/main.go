@@ -31,6 +31,7 @@ func main() {
 	credentials := handlers.AllowCredentials()
 
 	router.HandleFunc("/post", server.CreatePostHandler).Methods("POST")
+	router.HandleFunc("/post/{id}", server.GetPostByIdHandler).Methods("GET")
 	router.HandleFunc("/posts", server.GetAllPostsHandler).Methods("GET")
 	router.HandleFunc("/posts/{user}", server.GetAllPostsFromUserHandler).Methods("GET")
 	router.HandleFunc("/post/like/{id}", server.LikeAPostHandler).Methods("PUT")

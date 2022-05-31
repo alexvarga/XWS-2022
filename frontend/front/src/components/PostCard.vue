@@ -1,17 +1,20 @@
-<template>
-  <v-card class="ma-4" link elevation="3">
+<template> <div>
+  <v-card class="ma-4"  :to="'/post/'+post.ID" elevation="3">
     <v-card-title>Post title </v-card-title>
     <v-card-subtitle>Autor: {{this.user.firstName}} {{user.lastName}} {{user.email}} {{post.UserID}}</v-card-subtitle>
     
     <v-card-text>
-      <div ></div>
+      <div >
       <!-- <h3>{{user.firstName}} {{user.lastName}} {{user.email}}</h3>   -->
       <!-- <p>{{(post.Content)}}</p>  -->
-      <div v-html="decodedContent"></div>
-      
-      </v-card-text
-    >
+      <div v-if="decodedContent.length<400" v-html="decodedContent"></div>
+      <div v-else v-html="decodedContent.substring(0, 400)"></div>
+       </div> 
+
+      </v-card-text>
   </v-card>
+
+</div>
 
 </template>
 

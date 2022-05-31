@@ -121,6 +121,18 @@ func (postServer *PostServer) LeaveACommentHandler(writer http.ResponseWriter, r
 	}
 }
 
+func (postServer *PostServer) GetPostByIdHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	postId := vars["id"]
+	if postId == "" {
+		http.Error(writer, "missing user id", http.StatusMethodNotAllowed)
+	}
+	post := postServer.postRepo.GetPostById(postId)
+	fmt.Println(post, "ovo je post")
+	renderJSON(writer, post)
+
+}
+
 func NewPostServer() (*PostServer, error) {
 	postRepo, err := repo.NewRepo()
 	if err != nil {

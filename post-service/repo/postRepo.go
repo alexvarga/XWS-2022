@@ -197,3 +197,20 @@ func (postRepo *PostRepo) AddAComment(userId string, postId string, commentText 
 	fmt.Println(updatePost, "post updated with a comment")
 	return nil
 }
+
+func (postRepo *PostRepo) GetPostById(id string) data.Post {
+	var post data.Post
+	objectId, err := primitive.ObjectIDFromHex(id)
+	fmt.Println(objectId, "ovo je objectID")
+	if err != nil {
+		fmt.Println(err)
+	}
+	filter := bson.D{{"_id", objectId}}
+	collection := postRepo.client.Database("posts").Collection("posts")
+	err1 := collection.FindOne(context.TODO(), filter).Decode(&post)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	return post
+
+}
