@@ -1,8 +1,13 @@
 <template>
   <div class="post">
-        <v-snackbar transition="fade-transition" v-model="snackbar" centered timeout="1500">
-      <div >{{snackbarText}}</div>
-      </v-snackbar>  
+    <v-snackbar
+      transition="fade-transition"
+      v-model="snackbar"
+      centered
+      timeout="1500"
+    >
+      <div>{{ snackbarText }}</div>
+    </v-snackbar>
     <div>
       <v-card outlined class="ma-4">
         <v-card-title>Post title</v-card-title>
@@ -33,19 +38,20 @@
         <v-card-title>Comments</v-card-title>
         <div>
           <v-card-text class="ma-4">
-          <div v-if="loggedInUser">
-            <!-- <p style="white-space: pre-line">{{ comment }}</p> -->
-            <v-textarea id="ta"
-              class="mr-8"
-              solo
-              auto-grow
-              v-model="commentHere"
-              label="Your comment"
-            ></v-textarea>
+            <div v-if="loggedInUser">
+              <!-- <p style="white-space: pre-line">{{ comment }}</p> -->
+              <v-textarea
+                id="ta"
+                class="mr-8"
+                solo
+                auto-grow
+                v-model="commentHere"
+                label="Your comment"
+              ></v-textarea>
 
-            <v-btn @click="postAComment">Submit</v-btn>
-          </div>
-        </v-card-text>
+              <v-btn @click="postAComment">Submit</v-btn>
+            </div>
+          </v-card-text>
         </div>
         <div v-for="comment in this.post.comments" :key="comment.Id">
           <comment-component :comment="comment"></comment-component>
@@ -61,7 +67,6 @@ import moment from "moment";
 import CommentComponent from "@/components/CommentComponent.vue";
 import { getToken, getUsername } from "../token/token.js";
 
-
 export default {
   components: { CommentComponent },
   name: "PostView",
@@ -73,7 +78,7 @@ export default {
       loggedInUserId: "",
       commentHere: "",
       post: {
-        id:"",
+        id: "",
         decodedContent: "",
         userId: "",
         userFirstName: "",
@@ -83,10 +88,23 @@ export default {
         dislikes: 0,
         comments: [],
       },
+      // usersWhoCommented: [],
+      // commentWithNames: {
+      //   id: "",
+      //   text: "",
+      //   userFirstName: "",
+      //   userLastName: "",
+      //   userId: "",
+      //   timePublished: "",
+      // },
+      // commentsWithNames: {
+      //   commentWithNames: [],
+      // },
+
     };
   },
   methods: {
-    getPost() {
+    async getPost() {
       axios
         .get("http://localhost:8080/api/post/post/" + this.postId)
         .then((response) => {
@@ -98,54 +116,68 @@ export default {
           );
 
           this.post.published = time;
-          console.log(time);
           this.post.likes = response.data.Likes;
           this.post.dislikes = response.data.Dislikes;
           this.post.comments = response.data.Comments;
 
+          console.log(this.post.comments, "post comments ");
+
           axios
             .get("http://localhost:8080/api/user/user/" + this.post.userId)
-            .then((response) => {
-              console.log(response.data, "response data duh");
-              this.post.userFirstName = response.data.FirstName;
-              this.post.userLastName = response.data.LastName;
+            .then((response3) => {
+              console.log(response3.data, "response data duh");
+              this.post.userFirstName = response3.data.FirstName;
+              this.post.userLastName = response3.data.LastName;
+
+              this.getCommentNames();
             });
         });
     },
-    checkLoggedInUser(){    
-        if (getToken() != null) {
+    checkLoggedInUser() {
+      if (getToken() != null) {
         this.loggedInUser = true;
         console.log("---- 1. checkLoggedInUser()");
-        axios.get("http://localhost:8080/api/user/user/id/" + getUsername())
+        axios
+          .get("http://localhost:8080/api/user/user/id/" + getUsername())
           .then((response) => {
             this.loggedInUserId = response.data;
-            console.log(this.loggedInUserId, "logged in user id")
-      });
-        }
-
-    },
-    postAComment(){
-      if (this.loggedInUser == true){
-        axios.post("http://localhost:8080/api/post/post/comment/"+this.postId, {
-          userId: this.loggedInUserId,
-          text: this.commentHere,
-        })
-
-        // var newComment= {
-        //   postId: this.postId,
-        //   userId: this.loggedInUserId,
-        //   text: this.commentHere,
-
-        // }
-        // this.post.comments.push(newComment);
-        
-        console.log(this.commentHere);
-        //document.getElementById("ta").value="";
-        this.commentHere="";
-        this.snackbarText="Your comment has been submitted.";
-        this.snackbar=true;
+            console.log(this.loggedInUserId, "logged in user id");
+          });
       }
     },
+    postAComment() {
+      if (this.loggedInUser == true) {
+        axios.post(
+          "http://localhost:8080/api/post/post/comment/" + this.postId,
+          {
+            userId: this.loggedInUserId,
+            text: this.commentHere,
+          }
+        );
+
+        this.commentHere = "";
+        this.snackbarText = "Your comment has been submitted.";
+        this.snackbar = true;
+      }
+    },
+    // async getCommentNames() {
+    //   // try {
+    //   //const responses = [];
+    //   for (let i = 0; i < this.post.comments.length; i++) {
+    //     await axios
+    //       .get(
+    //         "http://localhost:8080/api/user/user/" +
+    //           this.post.comments[i].UserID
+    //       )
+    //       .then((response) => {
+    //         this.usersWhoCommented.push(response.data);
+    //       });
+    //   }
+
+    //   // } catch {
+    //   //   console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    //   // }
+    // },
   },
   created() {
     this.postId = this.$route.params.postId;
@@ -157,8 +189,8 @@ export default {
 };
 </script>
 
-<style scoped>    
-    ::v-deep .v-snack__wrapper {
-        min-width: 0px;
-    }
+<style scoped>
+::v-deep .v-snack__wrapper {
+  min-width: 0px;
+}
 </style>
