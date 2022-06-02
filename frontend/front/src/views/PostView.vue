@@ -14,7 +14,7 @@
         <v-card-subtitle>
           Posted: {{ this.post.published }}
           <br />
-          <v-btn :ripple="false" class="pa-0 ma-0" plain text
+          <v-btn  :to="'/user/'+post.userId" :ripple="false" class="pa-0 ma-0" plain text
             >Author: {{ this.post.userFirstName }}
             {{ this.post.userLastName }}</v-btn
           >
@@ -129,7 +129,6 @@ export default {
               this.post.userFirstName = response3.data.FirstName;
               this.post.userLastName = response3.data.LastName;
 
-              this.getCommentNames();
             });
         });
     },

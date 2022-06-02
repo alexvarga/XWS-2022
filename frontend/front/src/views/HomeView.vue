@@ -33,7 +33,6 @@ export default {
     checkLoggedInUser() {
       if (getToken() != null) {
         this.loggedInUser = true;
-        console.log("---- 1. checkLoggedInUser()");
       }
     },
     loadPostsForLoggedInUser() {
@@ -52,9 +51,6 @@ export default {
                 console.log(this.loggedInUserId);
                 this.allFollows = response2.data;
 
-                console.log(this.allFollows, "all follows");
-
-                console.log(response2.data, "follows data");
                 this.allFollows.forEach((element) => {
                   axios
                     .get(
@@ -62,9 +58,6 @@ export default {
                         element.FolloweeID
                     )
                     .then((response3) => {
-                      console.log("samo test");
-                      console.log(element.FolloweeID);
-                      console.log(response3.data, "response data");
                       response3.data.forEach((el) => {
                         this.allPosts.push(el);
                       });
@@ -76,14 +69,9 @@ export default {
     },
 
     loadPosts() {
-      console.log("---- 4. loadPosts() - outside");
-
       if (!this.loggedInUser) {
         axios.get("http://localhost:8080/api/post/posts").then((response) => {
-          console.log("---- 4a. loadPosts() - inside");
-
           this.allPosts = response.data;
-          // console.log(this.allPosts[0], "post");
         });
       } else {
         console.log("hi");

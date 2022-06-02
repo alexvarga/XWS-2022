@@ -1,7 +1,7 @@
 <template>
   <v-card class="ma-4">
     <v-card-subtitle>
-      <v-btn :ripple="false" class="pa-0 ma-0" plain text
+      <v-btn :to="'/user/'+this.comment.UserID" :ripple="false" class="pa-0 ma-0" plain text
         >Commenter: {{ this.userFirstName }} {{ this.userLastName }}
       </v-btn></v-card-subtitle>
 
