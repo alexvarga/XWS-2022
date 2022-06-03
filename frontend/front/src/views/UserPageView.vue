@@ -3,11 +3,9 @@
     <v-tabs fixed-tabs>
       <v-tab href="#myPosts">My Posts</v-tab>
       <v-tab-item value="myPosts">
-
-        <v-card class="ma-4 text-center"  elevation="0"> 
-        <v-btn class="center"  > New Post</v-btn>
-           </v-card>
-        
+        <v-card class="ma-4 text-center" elevation="0">
+          <v-btn class="center"> New Post</v-btn>
+        </v-card>
 
         <div class="">
           <div v-for="post in userPosts" :key="post.id">
@@ -25,10 +23,21 @@
       </v-tab-item>
 
       <v-tab href="#following">Following</v-tab>
-      <v-tab-item value="following"> </v-tab-item>
+      <v-tab-item value="following">
+        <div>
+          <following-component :type="'ing'"
+            :followings="this.followings"
+          ></following-component>
+        </div>
+      </v-tab-item>
 
       <v-tab href="#followers">Followers</v-tab>
-      <v-tab-item value="followers"> </v-tab-item>
+      <v-tab-item value="followers">
+        <div>
+          <following-component :type="'ers'"
+            :followers="this.followers"
+          ></following-component></div
+      ></v-tab-item>
 
       <v-tab href="#exp">Experience</v-tab>
       <v-tab-item value="exp"> </v-tab-item>
@@ -50,12 +59,20 @@ import axios from "axios";
 import PostCard from "../components/PostCard.vue";
 import ExperienceCardComponent from "@/components/ExperienceCardComponent.vue";
 import UpdateProfileComponenet from "../components/UpdateProfileComponent.vue";
+import FollowingComponent from "../components/FollowingComponent.vue";
 
 export default {
-  components: { PostCard, ExperienceCardComponent, UpdateProfileComponenet },
+  components: {
+    PostCard,
+    ExperienceCardComponent,
+    UpdateProfileComponenet,
+    FollowingComponent,
+  },
   name: "UserPageView",
   data() {
     return {
+      followers: [],
+      followings: [],
       test: "testtesttest",
       user: {
         id: "",
@@ -86,15 +103,17 @@ export default {
           this.user.lastName = response.data.LastName;
           this.user.gender = response.data.Gender;
           this.user.age = response.data.Age;
-          this.user.phoneNumber=response.data.PhoneNumber;
+          this.user.phoneNumber = response.data.PhoneNumber;
           this.user.bio = response.data.Bio;
-          this.user.privateProfile=response.data.PrivateProfile;
+          this.user.privateProfile = response.data.PrivateProfile;
 
           this.user.experience = response.data.Experience;
           this.user.interests = response.data.Interests;
           //console.log(response.data.Experience[1], "exp")
           // console.log(this.user, "user");
           this.getPostsForThisUser();
+          this.getFollowersForThisUser();
+          this.getFollowingsForThisUser();
         });
     },
     getPostsForThisUser() {
@@ -107,12 +126,25 @@ export default {
           console.log(this.userPosts);
         });
     },
-  },
-  created() {
-    console.log("test created");
+    getFollowersForThisUser() {
+      axios
+        .get("http://localhost:8080/api/follow/followers/" + this.user.id)
+        .then((response) => {
+          this.followers = response.data;
+          console.log(response.data, "response data for followers ");
+        });
+    },
+        getFollowingsForThisUser() {
+      axios
+        .get("http://localhost:8080/api/follow/following/" + this.user.id)
+        .then((response) => {
+          this.followings = response.data;
+          console.log(response.data, "response data for following ");
+        });
+    },
   },
 
-  mounted() {
+  created() {
     this.getUser();
 
     //this.getPostsForThisUser();
