@@ -71,6 +71,8 @@ export default {
       },
       snackbar: false,
       snackbarText : "",
+      data2: "this is data2",
+
     };
   },
   methods: {
@@ -81,11 +83,13 @@ export default {
             }
             axios.post('http://localhost:8080/api/auth/login', loginCredentials)
             .then(response =>{
-                console.log(response)
+                //console.log(response)
                 let token = response.data;
                 setToken(token);
-                console.log(token, 'loggin token');
-                this.$router.push({path: "/"});
+
+
+                
+                this.$router.push({path:'/'});
 
             }).catch(error => {
                 if(error.response.status === 400){

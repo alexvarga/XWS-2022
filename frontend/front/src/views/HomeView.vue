@@ -18,7 +18,7 @@ export default {
 
   components: {
     HelloWorld,
-    HeaderComponent,
+    
     PostCard,
   },
   data() {
@@ -86,6 +86,7 @@ export default {
 
   mounted() {
     this.loadPosts();
+
   },
 };
 </script>

@@ -90,7 +90,9 @@ export default {
       rules: {
         passwordRules: [(password) => !!password || "Password is required!"],
         usernameRules: [(email) => !!email || "Username is required"],
-        ageRules: [(age) => /^[0-9\s]+$/.test(age) || "Age must contain numbers only"],
+        ageRules: [
+          (age) => /^[0-9\s]+$/.test(age) || "Age must contain numbers only",
+        ],
       },
       snackbar: false,
       snackbarText: "",
@@ -101,16 +103,14 @@ export default {
       let registerCredentials = {
         email: this.form.email,
         password: this.form.password,
-
       };
-        let userCredentials = {
+      let userCredentials = {
         email: this.form.email,
         password: this.form.password,
         firstName: this.form.firstName,
         lastName: this.form.lastName,
         gender: this.form.gender,
         age: this.form.age,
-
       };
       axios
         .post("http://localhost:8080/api/auth/register", registerCredentials)
@@ -130,13 +130,12 @@ export default {
           }
         });
 
-        console.log(userCredentials, "userCredentials")
 
       axios
         .post("http://localhost:8080/api/user/user", userCredentials)
         .then((response2) => {
-          console.log(response2, "response ");
-          this.$router.push({ path: "/" });
+          this.$router.go(-1);
+
         })
         .catch((error2) => {
           if (error2.response2.status === 400) {

@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import RegisterView from '../views/RegisterView.vue'
 import PostView from '../views/PostView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import UserPageView from '../views/UserPageView.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/user/:userId',
     name: 'user',
     component: ProfileView
+  },
+  {
+    path: '/myHome',
+    name: 'myHome',
+    component: UserPageView
   },
 
   {

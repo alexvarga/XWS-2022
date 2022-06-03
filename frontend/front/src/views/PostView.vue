@@ -14,7 +14,12 @@
         <v-card-subtitle>
           Posted: {{ this.post.published }}
           <br />
-          <v-btn  :to="'/user/'+post.userId" :ripple="false" class="pa-0 ma-0" plain text
+          <v-btn
+            :to="'/user/' + post.userId"
+            :ripple="false"
+            class="pa-0 ma-0"
+            plain
+            text
             >Author: {{ this.post.userFirstName }}
             {{ this.post.userLastName }}</v-btn
           >
@@ -100,7 +105,6 @@ export default {
       // commentsWithNames: {
       //   commentWithNames: [],
       // },
-
     };
   },
   methods: {
@@ -128,14 +132,12 @@ export default {
               console.log(response3.data, "response data duh");
               this.post.userFirstName = response3.data.FirstName;
               this.post.userLastName = response3.data.LastName;
-
             });
         });
     },
     checkLoggedInUser() {
       if (getToken() != null) {
         this.loggedInUser = true;
-        console.log("---- 1. checkLoggedInUser()");
         axios
           .get("http://localhost:8080/api/user/user/id/" + getUsername())
           .then((response) => {
