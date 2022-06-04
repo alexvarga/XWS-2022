@@ -1,5 +1,10 @@
 <template>
+<div>
+      <!-- <header-component></header-component> -->
+      <alt-header-component></alt-header-component>
+
   <v-app class="grey lighten-4">
+
     <v-snackbar v-model="snackbar" centered timeout="3500">
       <span>{{snackbarText}}</span>
       </v-snackbar>  
@@ -7,8 +12,8 @@
       <v-row>
         <v-col width="300px"></v-col>
         <v-col width="600px">
-          <v-toolbar flat height="45" width="800px">
-            <v-app-bar app height="45" color="grey lighten-3">
+          <v-toolbar flat height="0" width="800px">
+            <v-app-bar app height="0" color="grey lighten-3">
               <v-app-bar-nav-icon @click="$router.push('/')">
                 <v-icon>mdi-arrow-left</v-icon>
               </v-app-bar-nav-icon>
@@ -48,13 +53,18 @@
       </v-row>
     </v-container>
   </v-app>
+</div>
 </template>
 
 <script>
 import axios from 'axios';
 import { setToken } from '../token/token.js'
+import AltHeaderComponent from '../components/AltHeaderComponent.vue';
+
 
 export default {
+      components: {AltHeaderComponent},
+
   name: "Login",
   data() {
     return {

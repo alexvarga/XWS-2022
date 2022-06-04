@@ -3,7 +3,10 @@
     <v-app-bar color="indigo accent-4" dense dark>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Dislinkt</v-toolbar-title>
+      <v-toolbar-title >
+          
+          <v-btn x-large :to="'/'" text flat >Dislinkt</v-btn>
+          </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -76,12 +79,14 @@ export default {
       }
     },
     goToRegister() {
+      
       this.$router.push({ path: "/register" });
     },
     goToLogin() {
       this.$router.push({ path: "/login" });
     },
     goToUserHome(){
+
       this.$router.push({path: "/myHome"});
     }
   },

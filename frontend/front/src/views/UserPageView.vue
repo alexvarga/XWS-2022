@@ -1,5 +1,7 @@
 <template>
   <div>
+          <header-component></header-component>
+
     <v-tabs fixed-tabs>
       <v-tab href="#myPosts">My Posts</v-tab>
       <v-tab-item value="myPosts">
@@ -59,6 +61,7 @@ import axios from "axios";
 import PostCard from "../components/PostCard.vue";
 import ExperienceCardComponent from "@/components/ExperienceCardComponent.vue";
 import UpdateProfileComponenet from "../components/UpdateProfileComponent.vue";
+import HeaderComponent from '../components/HeaderComponent.vue';
 import FollowingComponent from "../components/FollowingComponent.vue";
 
 export default {
@@ -67,6 +70,7 @@ export default {
     ExperienceCardComponent,
     UpdateProfileComponenet,
     FollowingComponent,
+    HeaderComponent,
   },
   name: "UserPageView",
   data() {

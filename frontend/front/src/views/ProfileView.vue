@@ -1,5 +1,7 @@
 <template>
   <div>
+          <header-component></header-component>
+
     <!-- <p>hi {{ this.userId }}</p>
     <p>{{ this.user.firstName }}</p> -->
 
@@ -32,10 +34,12 @@ import { getToken, getUsername } from "../token/token.js";
 
 import Axios from "axios";
 import PostCard from "../components/PostCard.vue";
+import HeaderComponent from '../components/HeaderComponent.vue';
+
 import ExperienceCardComponent from "@/components/ExperienceCardComponent.vue";
 
 export default {
-  components: { PostCard, ExperienceCardComponent },
+  components: { PostCard, ExperienceCardComponent, HeaderComponent },
   name: "ProfileView",
   data() {
     return {

@@ -1,5 +1,8 @@
 <template>
   <div class="home">
+  <header-component></header-component>
+
+    
     <div v-for="post in allPosts" :key="post.id">
       <post-card :post="post"></post-card>
     </div>
@@ -13,11 +16,13 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import PostCard from "../components/PostCard.vue";
 import axios from "axios";
 
+
 export default {
   name: "Home",
 
   components: {
     HelloWorld,
+    HeaderComponent,
     
     PostCard,
   },
@@ -86,6 +91,8 @@ export default {
 
   mounted() {
     this.loadPosts();
+
+
 
   },
 };

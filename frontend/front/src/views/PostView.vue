@@ -1,5 +1,7 @@
 <template>
   <div class="post">
+          <header-component></header-component>
+
     <v-snackbar
       transition="fade-transition"
       v-model="snackbar"
@@ -70,10 +72,11 @@
 import axios from "axios";
 import moment from "moment";
 import CommentComponent from "@/components/CommentComponent.vue";
+import HeaderComponent from '../components/HeaderComponent.vue';
 import { getToken, getUsername } from "../token/token.js";
 
 export default {
-  components: { CommentComponent },
+  components: { CommentComponent, HeaderComponent },
   name: "PostView",
   data() {
     return {

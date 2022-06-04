@@ -1,5 +1,7 @@
 <template>
   <div>
+          <header-component></header-component>
+
     <div v-if="isLoggedIn==true">
 
     <v-card class="ma-4 text-center">
@@ -22,14 +24,14 @@
 </template>
 
 <script>
-
+import HeaderComponent from '../components/HeaderComponent.vue';
 import Axios from "axios";
 import { VueEditor } from "vue2-editor";
 import { getToken, getId, getUsername } from "../token/token.js";
 
 
 export default {
-  components: { VueEditor },
+  components: { VueEditor, HeaderComponent },
   methods: {
     submit() {
 
