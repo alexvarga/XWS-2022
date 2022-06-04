@@ -3,12 +3,16 @@
     <!-- <p>hi {{ this.userId }}</p>
     <p>{{ this.user.firstName }}</p> -->
 
-            <v-card class="ma-4 text-center" elevation="0">
-              <v-card-title class="justify-center">{{this.user.firstName}} {{this.user.lastName}}</v-card-title>
-              <v-card-text>Bio: {{this.user.bio}}</v-card-text>
-          <v-btn v-if="!follows && isLoggedIn" class="center">Follow</v-btn>
-          <v-btn v-if="follows && isLoggedIn" class="center">Unfollow</v-btn>
-        </v-card>
+    <v-card class="ma-4 text-center" elevation="0">
+      <v-card-title class="justify-center"
+        >{{ this.user.firstName }} {{ this.user.lastName }}</v-card-title
+      >
+      <v-card-text>Bio: {{ this.user.bio }}</v-card-text>
+      <div v-if="!(loggedInUser == this.userId)">
+        <v-btn @click="followUser" v-if="!follows && isLoggedIn" class="center">Follow</v-btn>
+        <v-btn v-if="follows && isLoggedIn" class="center">Unfollow</v-btn>
+      </div>
+    </v-card>
 
     <div class="">
       <div v-for="post in userPosts" :key="post.id">
@@ -16,10 +20,9 @@
       </div>
 
       <div v-for="experienceItem in user.experience" :key="experienceItem.id">
-        <experience-card-component :experienceItem="experienceItem"> </experience-card-component>
+        <experience-card-component :experienceItem="experienceItem">
+        </experience-card-component>
       </div>
-
-
     </div>
   </div>
 </template>
@@ -54,24 +57,30 @@ export default {
   },
 
   methods: {
-        checkLoggedInUser() {
+    checkLoggedInUser() {
       if (getToken() != null) {
         this.isLoggedIn = true;
       }
     },
-    isFollower(userProfile){
-      if(this.isLoggedIn){
-      Axios.get("http://localhost:8080/api/user/user/id/" + getUsername()).then((response)=>{
+    isFollower(userProfile) {
+      if (this.isLoggedIn) {
+        Axios.get(
+          "http://localhost:8080/api/user/user/id/" + getUsername()
+        ).then((response) => {
           let currentlyLogged = response.data;
-          console.log(currentlyLogged, "PO 10000000000ti put")
-          Axios.get("http://localhost:8080/api/follow/followss/"+this.userId+ "/" +currentlyLogged).then((response)=>{
-            this.follows=response.data;
+          this.loggedInUser = currentlyLogged;
+          console.log(currentlyLogged, "PO 10000000000ti put");
+          Axios.get(
+            "http://localhost:8080/api/follow/followss/" +
+              this.userId +
+              "/" +
+              currentlyLogged
+          ).then((response) => {
+            this.follows = response.data;
             console.log(this.follows, "follows");
-          })
+          });
+        });
       }
-      )
-      }
-
     },
     getUser() {
       Axios.get("http://localhost:8080/api/user/user/" + this.userId).then(
@@ -85,7 +94,7 @@ export default {
           this.user.experience = response.data.Experience;
           this.user.interests = response.data.Interests;
 
-          this.isFollower()
+          this.isFollower();
         }
       );
     },
@@ -98,6 +107,17 @@ export default {
           console.log(this.userPosts);
         }
       );
+    },
+    followUser() {
+      Axios.post(
+        "http://localhost:8080/api/follow/follow/" +
+          this.userId +
+          "/" +
+          this.loggedInUser
+      ).then((response) => {
+        this.follows=true;
+        console.log("following response", response.data)
+      });
     },
   },
 
