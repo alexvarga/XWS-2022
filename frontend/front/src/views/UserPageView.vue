@@ -4,7 +4,7 @@
       <v-tab href="#myPosts">My Posts</v-tab>
       <v-tab-item value="myPosts">
         <v-card class="ma-4 text-center" elevation="0">
-          <v-btn class="center"> New Post</v-btn>
+          <v-btn :test="test" :to="'/new/post'" class="center"> New Post</v-btn>
         </v-card>
 
         <div class="">

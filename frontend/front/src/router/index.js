@@ -6,6 +6,7 @@ import RegisterView from '../views/RegisterView.vue'
 import PostView from '../views/PostView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UserPageView from '../views/UserPageView.vue'
+import NewPostView from '../views/NewPostView.vue'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,11 @@ const routes = [
     path: '/register',
     name: 'register',
     component: RegisterView
+  },
+  {
+    path: '/new/post',
+    name: 'newPost',
+    component: NewPostView
   },
   {
     path: '/post/:postId',

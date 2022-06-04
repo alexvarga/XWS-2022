@@ -69,7 +69,7 @@ export default {
         ).then((response) => {
           let currentlyLogged = response.data;
           this.loggedInUser = currentlyLogged;
-          console.log(currentlyLogged, "PO 10000000000ti put");
+          
           Axios.get(
             "http://localhost:8080/api/follow/followss/" +
               this.userId +

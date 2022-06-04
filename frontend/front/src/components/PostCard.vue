@@ -1,6 +1,6 @@
 <template> <div>
   <v-card class="ma-4"  :to="'/post/'+post.ID" elevation="3">
-    <v-card-title>Post title </v-card-title>
+    <v-card-title>{{post.Title}} </v-card-title>
     <v-card-subtitle>Autor: {{this.user.firstName}} {{user.lastName}} {{user.email}} {{post.UserID}}</v-card-subtitle>
     
     <v-card-text>

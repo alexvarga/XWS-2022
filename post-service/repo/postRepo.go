@@ -50,11 +50,12 @@ func (postRepo *PostRepo) CloseDB() error {
 	return err
 }
 
-func (postRepo *PostRepo) CreatePost(content []byte, id string) error {
+func (postRepo *PostRepo) CreatePost(content []byte, id string, title string) error {
 	post := data.Post{
 		Content:   content,
 		UserID:    id,
 		Published: time.Now(),
+		Title:     title,
 	}
 
 	collection := postRepo.client.Database("posts").Collection("posts")

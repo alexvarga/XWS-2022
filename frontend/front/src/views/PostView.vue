@@ -10,7 +10,7 @@
     </v-snackbar>
     <div>
       <v-card outlined class="ma-4">
-        <v-card-title>Post title</v-card-title>
+        <v-card-title>{{this.post.title}}</v-card-title>
         <v-card-subtitle>
           Posted: {{ this.post.published }}
           <br />
@@ -84,6 +84,7 @@ export default {
       commentHere: "",
       post: {
         id: "",
+        title: "",
         decodedContent: "",
         userId: "",
         userFirstName: "",
@@ -115,6 +116,7 @@ export default {
           var decodedContent = atob(response.data.Content);
           this.post.decodedContent = decodedContent;
           this.post.userId = response.data.UserID;
+          this.post.title=response.data.Title;
           var time = moment(response.data.Published).format(
             "dddd DD-MMMM-YYYY HH:mm"
           );
@@ -124,7 +126,6 @@ export default {
           this.post.dislikes = response.data.Dislikes;
           this.post.comments = response.data.Comments;
 
-          console.log(this.post.comments, "post comments ");
 
           axios
             .get("http://localhost:8080/api/user/user/" + this.post.userId)

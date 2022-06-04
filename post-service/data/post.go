@@ -4,7 +4,8 @@ import "time"
 
 type Post struct {
 	ID        string    `bson:"_id,omitempty"`
-	Content   []byte    `bson:"content"` //for now
+	Content   []byte    `bson:"content"`
+	Title     string    `bson:"title"`
 	UserID    string    `bson:"userId"`
 	Published time.Time `bson:"published"`
 	Likes     int       `bson:"likes"`

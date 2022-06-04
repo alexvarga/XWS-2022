@@ -40,7 +40,7 @@ func (postServer *PostServer) CreatePostHandler(writer http.ResponseWriter, requ
 
 	}
 
-	err = postServer.postRepo.CreatePost(rt.Content, rt.UserID)
+	err = postServer.postRepo.CreatePost(rt.Content, rt.UserID, rt.Title)
 	if err != nil {
 		fmt.Println(err)
 	}
