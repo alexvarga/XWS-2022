@@ -32,10 +32,13 @@
                     width="100px"
                   ></v-text-field>
                   <v-select
+                    value="showGender"
+                    v-model="defaultSelected"
                     @change="dataChanged('gender')"
                     v-on:change="setGender"
                     label="Gender"
                     :items="items"
+
                   ></v-select>
                   <v-text-field
                     @change="dataChanged('age')"
@@ -58,7 +61,7 @@
                     width="100px"
                   ></v-textarea>
                   <v-checkbox
-                  @change="dataChanged('privateProfile')"
+                    @change="dataChanged('privateProfile')"
                     v-model="user.privateProfile"
                     :label="`Private profile`"
                   ></v-checkbox>
@@ -83,6 +86,7 @@ export default {
 
   data() {
     return {
+      defaultSelected: "",
       items: ["Male", "Female", "Other"],
       data2: {},
       changes: [],
@@ -107,7 +111,6 @@ export default {
       Axios.put("http://localhost:8080/api/user/user", this.data2).then(
         (response) => {
           console.log(response);
-          this.data2 = {};
 
           this.snackbar = true;
           this.snackbarText = "Sucessfully updated";
@@ -115,10 +118,17 @@ export default {
       );
     },
 
-    displayGender() {},
-
     makeAnObject() {
-      this.data2 = { email: this.user.email };
+      this.data2 = {
+        email: this.user.email,
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        gender: this.user.gender,
+        age: this.user.age,
+        bio: this.user.bio,
+        phoneNumber: this.user.phoneNumber,
+        privateProfile: this.user.privateProfile,
+      };
 
       for (let i = 0; i < this.changes.length; i++) {
         let helper = "";
@@ -134,7 +144,7 @@ export default {
           helper = this.user.bio;
         } else if (this.changes[i] == "phoneNumber") {
           helper = this.user.phoneNumber;
-        }else if (this.changes[i] == "privateProfile") {
+        } else if (this.changes[i] == "privateProfile") {
           helper = this.user.privateProfile;
         }
 
@@ -148,18 +158,36 @@ export default {
         this.changes.push(a);
       }
       this.makeAnObject();
-      console.log(this.changes);
+      console.log(this.changes, "CHANGES");
+    },
+
+    selectGender() {
+      if (this.user.gender == 0) {
+        this.defaultSelected = "Male";
+      } else if (this.user.gender == 1) {
+        this.defaultSelected = "Female";
+      } else {
+        this.defaultSelected = "Other";
+      }
     },
 
     setGender(a) {
       if (a == "Male") {
+        this.initialSelected="Male";
         this.user.gender = 0;
       } else if (a == "Female") {
+        this.initialSelected="Female";
+
         this.user.gender = 1;
       } else {
+        this.initialSelected="Other";
+
         this.user.gender = 2;
       }
     },
   },
+  mounted(){
+    this.selectGender(); 
+  }
 };
 </script>
