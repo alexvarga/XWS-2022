@@ -191,3 +191,22 @@ func (followRepo *FollowRepo) GetAllFollowRequests(id string) []*data.FollowRequ
 	}
 	return requests
 }
+
+func (followRepo *FollowRepo) IsFollowing(followerId string, followeeId string) interface{} {
+	collection := followRepo.client.Database("follows").Collection("follows")
+
+	filter := bson.D{{"$and", bson.A{bson.D{{"followerId", followerId}}, bson.D{{"followeeId", followeeId}}}}}
+
+	var result data.Follow
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(result, "single result from follows")
+	if result.FollowerID == "" {
+		return false
+	} else {
+		return true
+	}
+
+}

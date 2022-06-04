@@ -94,6 +94,19 @@ func (followServer *FollowServer) GetAllFollowRequestsHandler(writer http.Respon
 	renderJSON(writer, followed)
 }
 
+func (followServer *FollowServer) IsFollowingHandler(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	followeeId := vars["followee"]
+	followerId := vars["follower"]
+	if followeeId == "" || followerId == "" {
+		http.Error(writer, "missing user or follower id", http.StatusMethodNotAllowed)
+	}
+	isFollowing := followServer.followRepo.IsFollowing(followerId, followeeId)
+
+	renderJSON(writer, isFollowing)
+
+}
+
 func NewFollowServer() (*FollowServer, error) {
 	followRepo, err := repo.NewRepo()
 	if err != nil {

@@ -37,6 +37,7 @@ func main() {
 	router.HandleFunc("/following/{userId}", server.GetAllFollowedHandler).Methods("GET")  //svi koje pratimo
 	router.HandleFunc("/follow/{user}/{follower}", server.AcceptFollowerHandler).Methods("PUT")
 	router.HandleFunc("/follower/requests/{user}", server.GetAllFollowRequestsHandler).Methods("GET")
+	router.HandleFunc("/followss/{followee}/{follower}", server.IsFollowingHandler).Methods("GET")
 
 	corsHandler := handlers.CORS(headers, methods, origins, credentials)
 
