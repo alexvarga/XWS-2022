@@ -37,27 +37,19 @@ export default {
 
       this.data.userId=this.loggedInUserId;
       this.data.title=this.postTitle;
-      console.log(this.data.content);
       this.data.content = btoa(this.data.content);
-      console.log(this.data.content);
-
       Axios.post("http://localhost:8080/api/post/post", this.data).then(
         (response) => {
-          //console.log(response.data);
-          //notify posted
-
           this.$router.push({ path: "/myHome" });
         }
       );
     },
     checkLoggedInUser() {
-      console.log("Hi")
       if (getToken() != null) {
         this.isLoggedIn = true;
         Axios.get("http://localhost:8080/api/user/user/id/"+getUsername()).then((response)=>
         {
           this.loggedInUserId=response.data;
-          console.log("logged now", this.loggedInUserId)
         })
       }
     },

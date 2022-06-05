@@ -35,15 +35,9 @@ export default {
    getUserById(){
       axios
       .get("http://localhost:8080/api/user/user/"+this.userId).then(response=> {
-        console.log( response.data)
-
-
         this.user.firstName=response.data.FirstName;
         this.user.lastName=response.data.LastName;
         this.user.bio = response.data.Bio;
-        console.log("log");
-
-        //return this.user.email;
         
       });
     },

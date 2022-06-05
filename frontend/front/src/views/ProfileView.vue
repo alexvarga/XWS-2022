@@ -81,7 +81,6 @@ export default {
               currentlyLogged
           ).then((response) => {
             this.follows = response.data;
-            console.log(this.follows, "follows");
           });
         });
       }
@@ -108,7 +107,6 @@ export default {
           response.data.forEach((el) => {
             this.userPosts.push(el);
           });
-          console.log(this.userPosts);
         }
       );
     },
@@ -120,7 +118,6 @@ export default {
           this.loggedInUser
       ).then((response) => {
         this.follows=true;
-        console.log("following response", response.data)
       });
     },
   },

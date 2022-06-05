@@ -46,14 +46,12 @@ export default {
           .get("http://localhost:8080/api/user/user/id/" + getUsername())
           .then((response) => {
             this.loggedInUserId = response.data;
-            console.log(this.loggedInUserId, "logged in user id");
             axios
               .get(
                 "http://localhost:8080/api/follow/following/" +
                   this.loggedInUserId
               )
               .then((response2) => {
-                console.log(this.loggedInUserId);
                 this.allFollows = response2.data;
 
                 this.allFollows.forEach((element) => {

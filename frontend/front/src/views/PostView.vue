@@ -133,7 +133,6 @@ export default {
           axios
             .get("http://localhost:8080/api/user/user/" + this.post.userId)
             .then((response3) => {
-              console.log(response3.data, "response data duh");
               this.post.userFirstName = response3.data.FirstName;
               this.post.userLastName = response3.data.LastName;
             });
@@ -146,7 +145,6 @@ export default {
           .get("http://localhost:8080/api/user/user/id/" + getUsername())
           .then((response) => {
             this.loggedInUserId = response.data;
-            console.log(this.loggedInUserId, "logged in user id");
           });
       }
     },
@@ -180,7 +178,7 @@ export default {
     //   }
 
     //   // } catch {
-    //   //   console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    //   //   console.log("");
     //   // }
     // },
   },

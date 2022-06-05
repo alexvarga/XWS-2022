@@ -5,8 +5,6 @@
     
     <v-card-text>
       <div >
-      <!-- <h3>{{user.firstName}} {{user.lastName}} {{user.email}}</h3>   -->
-      <!-- <p>{{(post.Content)}}</p>  -->
       <div v-if="decodedContent.length<400" v-html="decodedContent"></div>
       <div v-else v-html="decodedContent.substring(0, 400)"></div>
        </div> 
@@ -39,14 +37,9 @@ export default {
    getUserById(id){
       axios
       .get("http://localhost:8080/api/user/user/"+id).then(response=> {
-        console.log(id, response.data)
-
         this.user.email=response.data.Email;
         this.user.firstName=response.data.FirstName;
         this.user.lastName=response.data.LastName;
-        console.log("log");
-        console.log(this.user.email)
-        //return this.user.email;
         
       });
     },

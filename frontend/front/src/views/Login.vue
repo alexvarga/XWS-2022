@@ -88,7 +88,6 @@ export default {
     isLoggedIn() {
       if (getToken() != null) {
         this.isLogged = true;
-        console.log(this.isLogged);
       }
     },
     submit() {

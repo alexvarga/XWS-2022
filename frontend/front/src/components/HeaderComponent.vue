@@ -73,8 +73,6 @@ export default {
           .get("http://localhost:8080/api/user/user/email/" + getUsername())
           .then((response) => {
             this.loggedInUser = response.data;
-            console.log(response.data, "response data");
-            console.log(this.loggedInUser, "logged in user");
           });
       }
     },

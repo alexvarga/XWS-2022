@@ -1,11 +1,11 @@
 <template>
   <div>
-        <v-snackbar v-model="snackbar" centered timeout="1500">
+        <v-snackbar v-model="snackbar" centered timeout="2500">
       <span>{{ snackbarText }}</span>
     </v-snackbar>
     <v-container>
       <v-card elevation="3">
-        <v-card-title class="justify-center">Add experience</v-card-title>
+        <v-card-title class="justify-center">Edit experience</v-card-title>
         <v-row justify="center">
           <v-col cols="12" sm="8" md="8"> </v-col>
         </v-row>
@@ -89,8 +89,11 @@
           </v-col>
         </v-row>
         <v-row justify="center">
-          <v-col cols="1" sm="1" md="1">
-            <v-btn @click="submit">Add</v-btn>
+          <v-col cols="4" sm="2" md="2">
+            <v-btn @click="update">Update</v-btn>
+          </v-col>
+          <v-col cols="4" sm="2" md="2">
+            <v-btn @click="cancelUpdate">Cancel</v-btn>
           </v-col>
         </v-row>
       </v-card>
@@ -102,8 +105,8 @@
 <script>
 import Axios from "axios";
 export default {
-  name: "NewExperienceComponent",
-  props: ["userEmail"],
+  name: "EditExperienceComponent",
+  props: ["experienceItem", "userEmail"],
   data() {
     return {
       sendData: {
@@ -118,15 +121,14 @@ export default {
         ],
       },
 
-      postTitle: "Title",
-      info: "Info placeholder",
+      postTitle: this.experienceItem.Title,
+      info: this.experienceItem.Info,
 
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      date: this.experienceItem.DateStarted,
+      date2: this.experienceItem.DateEnded,
+
       date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
-
         .substr(0, 10),
       menu: false,
       menu2: false,
@@ -135,21 +137,26 @@ export default {
     };
   },
   methods: {
-    submit() {
+    update() {
+      //this needs to change
+
       this.sendData.email = this.userEmail;
       this.sendData.experience[0].dateStarted = this.date;
       this.sendData.experience[0].dateEnded = this.date2;
       this.sendData.experience[0].title = this.postTitle;
       this.sendData.experience[0].info = this.info;
 
-      Axios.post(
-        "http://localhost:8080/api/user/user/experience",
+      Axios.put(
+        "http://localhost:8080/api/user/user/experience/" +
+          this.experienceItem.ID,
         this.sendData
       ).then((response) => {
-
-                  this.snackbar = true;
-          this.snackbarText = "Sucessfully added";
+        this.snackbar = true;
+        this.snackbarText = "Sucessfully Edited";
       });
+    },
+    cancelUpdate() {
+      this.$emit("cancelEdit", "test");
     },
   },
 };

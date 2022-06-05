@@ -145,7 +145,6 @@ export default {
           response.data.forEach((el) => {
             this.userPosts.push(el);
           });
-          console.log(this.userPosts);
         });
     },
     getFollowersForThisUser() {
@@ -153,7 +152,6 @@ export default {
         .get("http://localhost:8080/api/follow/followers/" + this.user.id)
         .then((response) => {
           this.followers = response.data;
-          console.log(response.data, "response data for followers ");
         });
     },
     getFollowingsForThisUser() {
@@ -161,7 +159,6 @@ export default {
         .get("http://localhost:8080/api/follow/following/" + this.user.id)
         .then((response) => {
           this.followings = response.data;
-          console.log(response.data, "response data for following ");
         });
     },
   },
@@ -170,7 +167,6 @@ export default {
     this.isLoggedIn();
     this.getUser();
 
-    //this.getPostsForThisUser();
   },
 };
 </script>

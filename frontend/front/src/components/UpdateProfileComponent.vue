@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" centered timeout="3500">
+    <v-snackbar v-model="snackbar" centered timeout="2500">
       <span>{{ snackbarText }}</span>
     </v-snackbar>
     <v-container center>
@@ -105,13 +105,8 @@ export default {
 
   methods: {
     submit() {
-      console.log(this.user, " user object");
-      console.log(this.data2, "data2 object");
-
       Axios.put("http://localhost:8080/api/user/user", this.data2).then(
         (response) => {
-          console.log(response);
-
           this.snackbar = true;
           this.snackbarText = "Sucessfully updated";
         }
@@ -150,7 +145,6 @@ export default {
 
         this.data2[this.changes[i]] = helper;
       }
-      console.log(this.data2, "created data");
     },
 
     dataChanged(a) {
@@ -158,7 +152,6 @@ export default {
         this.changes.push(a);
       }
       this.makeAnObject();
-      console.log(this.changes, "CHANGES");
     },
 
     selectGender() {
