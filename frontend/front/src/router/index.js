@@ -7,6 +7,7 @@ import PostView from '../views/PostView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UserPageView from '../views/UserPageView.vue'
 import NewPostView from '../views/NewPostView.vue'
+import SearchResultsView from '../views/SearchResultsView.vue'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,11 @@ const routes = [
     path: '/new/post',
     name: 'newPost',
     component: NewPostView
+  },
+  {
+    path: '/search/results/:query',
+    name: 'searchResults',
+    component: SearchResultsView
   },
   {
     path: '/post/:postId',

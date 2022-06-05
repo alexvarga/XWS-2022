@@ -10,7 +10,7 @@
 </div>
 
       <v-spacer></v-spacer>
-      <div>
+      <!-- <div>
         <v-container fluid >
           <v-row  no-gutters justify="center" align-content="center" align="end">
             <v-col  cols="12" sm="8" md="8" align-self="end" >
@@ -26,7 +26,7 @@
             </v-col>
           </v-row>
         </v-container>
-      </div>
+      </div> -->
       <div>
 
 
@@ -49,20 +49,7 @@
       </v-btn>
       </div>
 
-      <!-- <v-menu left bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
 
-        <v-list>
-        <v-list-item> </v-list-item>  
-          <v-list-item v-for="n in 5" :key="n" @click="() => {}">
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
     </v-app-bar>
   </div>
 </template>
@@ -104,12 +91,12 @@ export default {
     goToUserHome() {
       this.$router.push({ path: "/myHome" });
     },
-    search(){
-      console.log(this.searchQuery);
-    },
-    getUsers(){
+    // search(){
+    //   console.log(this.searchQuery);
+    // },
+    // getUsers(){
 
-    },
+    // },
     
   },
   mounted() {
