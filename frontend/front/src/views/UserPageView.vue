@@ -1,57 +1,66 @@
 <template>
   <div>
-          <header-component></header-component>
+    <header-component></header-component>
+    <div v-if="isLogged">
+      <v-tabs fixed-tabs>
+        <v-tab href="#myPosts">My Posts</v-tab>
+        <v-tab-item value="myPosts">
+          <v-card class="ma-4 text-center" elevation="0">
+            <v-btn :test="test" :to="'/new/post'" class="center">
+              New Post</v-btn
+            >
+          </v-card>
 
-    <v-tabs fixed-tabs>
-      <v-tab href="#myPosts">My Posts</v-tab>
-      <v-tab-item value="myPosts">
-        <v-card class="ma-4 text-center" elevation="0">
-          <v-btn :test="test" :to="'/new/post'" class="center"> New Post</v-btn>
-        </v-card>
+          <div class="">
+            <div v-for="post in userPosts" :key="post.id">
+              <post-card :post="post"></post-card>
+            </div>
 
-        <div class="">
-          <div v-for="post in userPosts" :key="post.id">
-            <post-card :post="post"></post-card>
+            <div
+              v-for="experienceItem in user.experience"
+              :key="experienceItem.id"
+            >
+              <experience-card-component :experienceItem="experienceItem">
+              </experience-card-component>
+            </div>
           </div>
+        </v-tab-item>
 
-          <div
-            v-for="experienceItem in user.experience"
-            :key="experienceItem.id"
-          >
-            <experience-card-component :experienceItem="experienceItem">
-            </experience-card-component>
+        <v-tab href="#following">Following</v-tab>
+        <v-tab-item value="following">
+          <div>
+            <following-component
+              :type="'ing'"
+              :followings="this.followings"
+            ></following-component>
           </div>
-        </div>
-      </v-tab-item>
+        </v-tab-item>
 
-      <v-tab href="#following">Following</v-tab>
-      <v-tab-item value="following">
-        <div>
-          <following-component :type="'ing'"
-            :followings="this.followings"
-          ></following-component>
-        </div>
-      </v-tab-item>
+        <v-tab href="#followers">Followers</v-tab>
+        <v-tab-item value="followers">
+          <div>
+            <following-component
+              :type="'ers'"
+              :followers="this.followers"
+            ></following-component></div
+        ></v-tab-item>
 
-      <v-tab href="#followers">Followers</v-tab>
-      <v-tab-item value="followers">
-        <div>
-          <following-component :type="'ers'"
-            :followers="this.followers"
-          ></following-component></div
-      ></v-tab-item>
+        <v-tab href="#exp">Experience</v-tab>
+        <v-tab-item value="exp">
+          <experience-component
+            :user="this.user" 
+          ></experience-component>
+        </v-tab-item>
 
-      <v-tab href="#exp">Experience</v-tab>
-      <v-tab-item value="exp"> </v-tab-item>
+        <v-tab href="#interests">Interests</v-tab>
+        <v-tab-item value="interests"> </v-tab-item>
 
-      <v-tab href="#interests">Interests</v-tab>
-      <v-tab-item value="interests"> </v-tab-item>
-
-      <v-tab href="#profileData">Update Profile</v-tab>
-      <v-tab-item value="profileData">
-        <update-profile-componenet :user="this.user" />
-      </v-tab-item>
-    </v-tabs>
+        <v-tab href="#profileData">Update Profile</v-tab>
+        <v-tab-item value="profileData">
+          <update-profile-componenet :user="this.user" />
+        </v-tab-item>
+      </v-tabs>
+    </div>
   </div>
 </template>
 
@@ -61,8 +70,10 @@ import axios from "axios";
 import PostCard from "../components/PostCard.vue";
 import ExperienceCardComponent from "@/components/ExperienceCardComponent.vue";
 import UpdateProfileComponenet from "../components/UpdateProfileComponent.vue";
-import HeaderComponent from '../components/HeaderComponent.vue';
+import HeaderComponent from "../components/HeaderComponent.vue";
 import FollowingComponent from "../components/FollowingComponent.vue";
+import NewExperienceComponent from "../components/NewExperienceComponent.vue";
+import ExperienceComponent from "../components/ExperienceComponent.vue";
 
 export default {
   components: {
@@ -71,10 +82,12 @@ export default {
     UpdateProfileComponenet,
     FollowingComponent,
     HeaderComponent,
+    ExperienceComponent,
   },
   name: "UserPageView",
   data() {
     return {
+      isLogged: false,
       followers: [],
       followings: [],
       test: "testtesttest",
@@ -96,11 +109,15 @@ export default {
   },
 
   methods: {
+    isLoggedIn() {
+      if (getToken() != null) {
+        this.isLogged = true;
+      }
+    },
     getUser() {
       axios
         .get("http://localhost:8080/api/user/user/email/" + getUsername())
         .then((response) => {
-          console.log(response.data, "response data");
           this.user.id = response.data.ID;
           this.user.email = response.data.Email;
           this.user.firstName = response.data.FirstName;
@@ -115,6 +132,7 @@ export default {
           this.user.interests = response.data.Interests;
           //console.log(response.data.Experience[1], "exp")
           // console.log(this.user, "user");
+
           this.getPostsForThisUser();
           this.getFollowersForThisUser();
           this.getFollowingsForThisUser();
@@ -138,7 +156,7 @@ export default {
           console.log(response.data, "response data for followers ");
         });
     },
-        getFollowingsForThisUser() {
+    getFollowingsForThisUser() {
       axios
         .get("http://localhost:8080/api/follow/following/" + this.user.id)
         .then((response) => {
@@ -149,6 +167,7 @@ export default {
   },
 
   created() {
+    this.isLoggedIn();
     this.getUser();
 
     //this.getPostsForThisUser();

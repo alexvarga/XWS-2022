@@ -5,7 +5,7 @@
 
       <v-toolbar-title >
           
-          <v-btn x-large :to="'/'" text flat >Dislinkt</v-btn>
+          <v-btn x-large :to="'/'" text  >Dislinkt</v-btn>
           </v-toolbar-title>
 
       <v-spacer></v-spacer>
