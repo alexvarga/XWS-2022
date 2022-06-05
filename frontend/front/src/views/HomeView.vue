@@ -2,7 +2,15 @@
   <div class="home">
   <header-component></header-component>
 
-    
+    <div v-if="loggedInUser" class="text-center" style="margin-top: 10px;">
+<h2>Posts By Users I Follow</h2>
+    </div>
+
+        <div v-if="!loggedInUser" class="text-center" style="margin-top: 10px;">
+<h2>All Posts</h2>
+    </div>
+
+
     <div v-for="post in allPosts" :key="post.id">
       <post-card :post="post"></post-card>
     </div>
