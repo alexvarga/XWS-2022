@@ -16,16 +16,25 @@
       </div>
     </v-card>
 
+    <div class="text-center">
+
+<h3>Posts by this user</h3>
+    </div>
     <div class="">
       <div v-for="post in userPosts" :key="post.id">
         <post-card :post="post"></post-card>
       </div>
+    </div>
+<div>
+     <div class="text-center">
 
+<h3>Experience</h3>
+    </div>
       <div v-for="experienceItem in user.experience" :key="experienceItem.id">
         <experience-card-component :experienceItem="experienceItem">
         </experience-card-component>
       </div>
-    </div>
+</div>
   </div>
 </template>
 
